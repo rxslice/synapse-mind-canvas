@@ -1,8 +1,7 @@
-
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Brain, Plus, Zap, Network, Save, MoreHorizontal, Activity, Clock, Target, Move, Minimize2, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useState, useEffect } from "react";
 
 interface ToolbarProps {
   onToggleAI: () => void;
