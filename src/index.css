@@ -134,7 +134,7 @@ body {
 }
 
 .animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+  animation: pulse-glow 2.4s ease-in-out infinite;
 }
 
 .animate-neural-pulse {
@@ -229,7 +229,7 @@ body {
 
 /* Loading animations */
 .loading-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* High contrast mode support */
