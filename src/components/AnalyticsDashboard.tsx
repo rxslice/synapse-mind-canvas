@@ -10,6 +10,7 @@ interface AnalyticsDashboardProps {
   onClose: () => void;
   nodes: Node[];
   connections: Connection[];
+  networkHealth: number;
 }
 
 interface NetworkMetrics {
@@ -24,7 +25,7 @@ interface NetworkMetrics {
   networkHealth: number;
 }
 
-export const AnalyticsDashboard = ({ isOpen, onClose, nodes, connections }: AnalyticsDashboardProps) => {
+export const AnalyticsDashboard = ({ isOpen, onClose, nodes, connections, networkHealth }: AnalyticsDashboardProps) => {
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
 
   const metrics = useMemo((): NetworkMetrics => {
@@ -91,15 +92,6 @@ export const AnalyticsDashboard = ({ isOpen, onClose, nodes, connections }: Anal
       });
     }
 
-    // Calculate network health
-    const healthFactors = [
-      Math.min(connectionDensity / 20, 1) * 25, // Connection density (target 20%)
-      Math.min(avgConnections / 3, 1) * 25, // Average connections (target 3)
-      Math.min(activeNodeIds.size / Math.max(nodes.length * 0.5, 1), 1) * 25, // Node activity (target 50%)
-      Math.min(recentNodes.length / Math.max(nodes.length * 0.2, 1), 1) * 25 // Recent growth (target 20%)
-    ];
-    const networkHealth = healthFactors.reduce((sum, factor) => sum + factor, 0);
-
     return {
       totalNodes: nodes.length,
       totalConnections: connections.length,
@@ -109,9 +101,9 @@ export const AnalyticsDashboard = ({ isOpen, onClose, nodes, connections }: Anal
       activeNodes: activeNodeIds.size,
       thoughtTypes,
       dailyActivity,
-      networkHealth
+      networkHealth: networkHealth
     };
-  }, [nodes, connections, timeRange]);
+  }, [nodes, connections, timeRange, networkHealth]);
 
   const chartColors = ['#00FFD1', '#E8A135', '#9945FF', '#FF6B6B', '#4ECDC4'];
 
