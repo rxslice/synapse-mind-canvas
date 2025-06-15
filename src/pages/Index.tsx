@@ -113,8 +113,11 @@ const Index = () => {
       id: uuidv4(),
       x,
       y,
+      width: 200,
+      height: 100,
       content: 'New Thought',
-      type: 'idea',
+      type: 'thought',
+      color: '#ffffff',
       createdAt: new Date(),
     };
     setNodes([...nodes, newNode]);
@@ -134,7 +137,9 @@ const Index = () => {
   const handleNodeDelete = (nodeId: string) => {
     setNodes(nodes.filter(node => node.id !== nodeId));
     setConnections(connections.filter(conn => conn.fromNodeId !== nodeId && conn.toNodeId !== nodeId));
-    setAiInsights(aiInsights.filter(insight => insight.nodeId !== nodeId));
+    setAiInsights(aiInsights.filter(insight => 
+      !insight.nodeIds?.includes(nodeId)
+    ));
     setSelectedNode(null);
   };
 
@@ -158,6 +163,7 @@ const Index = () => {
         id: uuidv4(),
         fromNodeId: newConnection.fromNodeId,
         toNodeId,
+        type: 'synapse',
         strength: newConnection.strength,
         createdAt: new Date(),
       };
@@ -212,9 +218,12 @@ const Index = () => {
     setIsSuggesting(true);
     try {
       const suggestions = await geminiService.generateContentSuggestions(node.content, nodes);
-      setNodes(nodes.map(n =>
-        n.id === nodeId ? { ...n, suggestions } : n
-      ));
+      // Store suggestions temporarily for display
+      console.log('Generated suggestions:', suggestions);
+      toast({
+        title: "Suggestions Generated",
+        description: `Generated ${suggestions.length} suggestions for this thought.`,
+      });
     } catch (error: any) {
       toast({
         title: "Suggestion Failed",
@@ -382,15 +391,6 @@ const Index = () => {
                     Delete Thought
                   </Button>
                 </div>
-
-                {selectedNode.suggestions && selectedNode.suggestions.length > 0 && (
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Suggestions</h3>
-                    {selectedNode.suggestions.map((suggestion, index) => (
-                      <Badge key={index} variant="secondary">{suggestion}</Badge>
-                    ))}
-                  </div>
-                )}
 
                 <h3 className="text-lg font-medium">Connect to...</h3>
                 <div className="space-y-2">
