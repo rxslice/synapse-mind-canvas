@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { Brain, Plus, Zap, Network, Save, MoreHorizontal } from "lucide-react";
+import { Brain, Plus, Zap, Network, Save, MoreHorizontal, Activity, Clock, Target } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 
 interface ToolbarProps {
   onToggleAI: () => void;
@@ -20,103 +21,186 @@ export const Toolbar = ({
   onQuickCreate,
   onSave 
 }: ToolbarProps) => {
+  const [sessionTime, setSessionTime] = useState(0);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSessionTime(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleSave = () => {
+    if (onSave) {
+      onSave();
+      setLastSaved(new Date());
+    }
+  };
+
+  const connectionStrength = nodeCount > 0 ? (connectionCount / Math.max(nodeCount - 1, 1)) * 100 : 0;
+
   return (
-    <div className="absolute top-4 left-4 z-50 max-w-[320px]">
-      <Card className="bg-[#0B3D3D]/95 backdrop-blur-premium border-[#00FFD1]/40 shadow-[0_0_25px_rgba(0,255,209,0.15)] glass-morphism">
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4">
-            {/* Header with branding */}
+    <div className="absolute top-4 left-4 z-50 w-[380px]">
+      <Card className="bg-gradient-to-br from-[#0B3D3D]/98 via-[#0A3A3A]/96 to-[#0B3D3D]/94 backdrop-blur-xl border border-[#00FFD1]/40 shadow-[0_0_40px_rgba(0,255,209,0.2)] rounded-3xl overflow-hidden">
+        {/* Animated border */}
+        <div className="absolute inset-0 rounded-3xl">
+          <div 
+            className="absolute inset-0 rounded-3xl opacity-30"
+            style={{
+              background: `conic-gradient(from 0deg, transparent, #00FFD1, transparent, #E8A135, transparent)`,
+              animation: 'spin 20s linear infinite',
+            }}
+          />
+          <div className="absolute inset-[2px] rounded-3xl bg-gradient-to-br from-[#0B3D3D]/98 via-[#0A3A3A]/96 to-[#0B3D3D]/94" />
+        </div>
+
+        <CardContent className="p-6 relative z-10">
+          <div className="flex flex-col gap-6">
+            {/* Enhanced Header */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-[#00FFD1]" />
-                <h1 className="text-xl font-light text-[#00FFD1] text-shadow-glow">Synapse</h1>
+              <div className="flex items-center gap-3">
+                <div className="relative p-3 bg-gradient-to-br from-[#00FFD1]/30 to-[#00FFD1]/10 rounded-2xl shadow-[0_0_20px_rgba(0,255,209,0.3)]">
+                  <Brain className="w-6 h-6 text-[#00FFD1]" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-[#00FFD1]/10" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-light text-[#00FFD1] tracking-wide">Neural Hub</h1>
+                  <p className="text-sm text-[#F0F0F0]/60 font-light">Command Center</p>
+                </div>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1]"
+                className="h-8 w-8 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-xl transition-all duration-300"
               >
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-[#083838]/50 rounded-lg p-3 border border-[#00FFD1]/20">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-2 h-2 rounded-full bg-[#00FFD1]" />
-                  <span className="text-xs text-[#F0F0F0]/70">Thoughts</span>
+            {/* Enhanced Stats Grid */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-2xl p-4 border border-[#00FFD1]/30 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00FFD1]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Target className="w-4 h-4 text-[#00FFD1]" />
+                    <span className="text-xs text-[#F0F0F0]/70 font-medium">Thoughts</span>
+                  </div>
+                  <div className="text-xl font-bold text-[#00FFD1] mb-1">{nodeCount}</div>
+                  <div className="text-xs text-[#00FFD1]/70">Active nodes</div>
                 </div>
-                <div className="text-lg font-medium text-[#00FFD1]">{nodeCount}</div>
               </div>
               
-              <div className="bg-[#083838]/50 rounded-lg p-3 border border-[#E8A135]/20">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-2 h-2 rounded-full bg-[#E8A135]" />
-                  <span className="text-xs text-[#F0F0F0]/70">Synapses</span>
+              <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-2xl p-4 border border-[#E8A135]/30 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#E8A135]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Network className="w-4 h-4 text-[#E8A135]" />
+                    <span className="text-xs text-[#F0F0F0]/70 font-medium">Synapses</span>
+                  </div>
+                  <div className="text-xl font-bold text-[#E8A135] mb-1">{connectionCount}</div>
+                  <div className="text-xs text-[#E8A135]/70">Connections</div>
                 </div>
-                <div className="text-lg font-medium text-[#E8A135]">{connectionCount}</div>
+              </div>
+
+              <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-2xl p-4 border border-[#9945FF]/30 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#9945FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="w-4 h-4 text-[#9945FF]" />
+                    <span className="text-xs text-[#F0F0F0]/70 font-medium">Density</span>
+                  </div>
+                  <div className="text-xl font-bold text-[#9945FF] mb-1">{Math.round(connectionStrength)}%</div>
+                  <div className="text-xs text-[#9945FF]/70">Network strength</div>
+                </div>
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="flex gap-2">
+            {/* Session Info */}
+            <div className="flex items-center justify-between p-3 bg-[#083838]/40 rounded-2xl border border-[#00FFD1]/20">
+              <div className="flex items-center gap-3">
+                <Clock className="w-4 h-4 text-[#00FFD1]/70" />
+                <span className="text-sm text-[#F0F0F0]/80">Session: {formatTime(sessionTime)}</span>
+              </div>
+              {lastSaved && (
+                <span className="text-xs text-[#F0F0F0]/50">
+                  Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
+            </div>
+
+            {/* Enhanced Quick Actions */}
+            <div className="flex gap-3">
               <Button
                 onClick={onQuickCreate}
                 size="sm"
-                className="flex-1 h-8 bg-[#00FFD1]/10 text-[#00FFD1] border border-[#00FFD1]/30 hover:bg-[#00FFD1]/20 hover:border-[#00FFD1]/50 transition-all duration-200"
+                className="flex-1 h-12 bg-gradient-to-r from-[#00FFD1]/20 to-[#00FFD1]/10 text-[#00FFD1] border border-[#00FFD1]/40 hover:from-[#00FFD1]/30 hover:to-[#00FFD1]/20 hover:border-[#00FFD1]/60 transition-all duration-300 rounded-2xl font-medium"
               >
-                <Plus className="w-3 h-3 mr-1" />
-                Create
+                <Plus className="w-4 h-4 mr-2" />
+                New Thought
               </Button>
               
               <Button
-                onClick={onSave}
+                onClick={handleSave}
                 size="sm"
-                variant="ghost"
-                className="h-8 px-3 text-[#F0F0F0]/60 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10"
+                className="h-12 px-4 bg-gradient-to-r from-[#083838]/60 to-[#083838]/40 text-[#F0F0F0]/70 border border-[#00FFD1]/20 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 hover:border-[#00FFD1]/40 transition-all duration-300 rounded-2xl"
               >
-                <Save className="w-3 h-3" />
+                <Save className="w-4 h-4" />
               </Button>
             </div>
 
-            {/* AI Toggle - More Prominent */}
+            {/* Enhanced AI Toggle */}
             <Button
               onClick={onToggleAI}
-              className={`w-full h-9 text-sm font-medium transition-all duration-300 ${
+              className={`w-full h-14 text-base font-semibold transition-all duration-500 rounded-2xl relative overflow-hidden ${
                 isAIActive
-                  ? "bg-[#00FFD1] text-[#0B3D3D] hover:bg-[#00FFD1]/90 shadow-[0_0_20px_rgba(0,255,209,0.4)] border-glow"
-                  : "bg-[#0B3D3D] text-[#00FFD1] border-2 border-[#00FFD1]/50 hover:bg-[#00FFD1]/10 hover:border-[#00FFD1]/70"
+                  ? "bg-gradient-to-r from-[#00FFD1] to-[#00FFD1]/90 text-[#0B3D3D] shadow-[0_0_30px_rgba(0,255,209,0.5)] hover:shadow-[0_0_40px_rgba(0,255,209,0.7)]"
+                  : "bg-gradient-to-r from-[#0B3D3D] to-[#083838] text-[#00FFD1] border-2 border-[#00FFD1]/50 hover:bg-gradient-to-r hover:from-[#00FFD1]/10 hover:to-[#00FFD1]/5 hover:border-[#00FFD1]/70"
               }`}
             >
-              <Zap className="w-4 h-4 mr-2" />
-              {isAIActive ? "AI Processing..." : "Activate AI Brain"}
+              {isAIActive && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+              )}
+              <div className="relative z-10 flex items-center justify-center gap-3">
+                <Zap className="w-5 h-5" />
+                {isAIActive ? "AI Brain Active" : "Activate AI Brain"}
+              </div>
             </Button>
 
-            {/* Network Status Indicator */}
-            <div className="flex items-center justify-center gap-2 pt-2 border-t border-[#00FFD1]/20">
-              <Network className="w-3 h-3 text-[#00FFD1]/60" />
-              <span className="text-xs text-[#F0F0F0]/40">Neural Network Active</span>
-              <div className="w-2 h-2 rounded-full bg-[#00FFD1] animate-pulse" />
+            {/* Enhanced Network Status */}
+            <div className="flex items-center justify-center gap-3 pt-3 border-t border-[#00FFD1]/20">
+              <Network className="w-4 h-4 text-[#00FFD1]/60" />
+              <span className="text-sm text-[#F0F0F0]/60 font-medium">Neural Network</span>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-[#00FFD1] animate-pulse" />
+                <span className="text-xs text-[#00FFD1]/80">Online</span>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Compact Instructions */}
-      <div className="mt-3 bg-[#0B3D3D]/80 backdrop-blur-sm border border-[#00FFD1]/15 rounded-lg p-3">
-        <div className="text-xs text-[#F0F0F0]/50 space-y-1">
-          <div className="flex justify-between">
-            <span>Double-click</span>
-            <span className="text-[#00FFD1]/70">New thought</span>
+      {/* Enhanced Instructions */}
+      <div className="mt-4 bg-gradient-to-br from-[#0B3D3D]/90 to-[#083838]/80 backdrop-blur-sm border border-[#00FFD1]/20 rounded-2xl p-4">
+        <div className="text-sm text-[#F0F0F0]/70 space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-[#F0F0F0]/50">Double-click canvas</span>
+            <span className="text-[#00FFD1]/80 font-medium">Create thought</span>
           </div>
-          <div className="flex justify-between">
-            <span>Drag nodes</span>
-            <span className="text-[#E8A135]/70">Organize</span>
+          <div className="flex justify-between items-center">
+            <span className="text-[#F0F0F0]/50">Drag nodes</span>
+            <span className="text-[#E8A135]/80 font-medium">Organize ideas</span>
           </div>
-          <div className="flex justify-between">
-            <span>Click + drag</span>
-            <span className="text-[#00FFD1]/70">Connect ideas</span>
+          <div className="flex justify-between items-center">
+            <span className="text-[#F0F0F0]/50">Click + drag connections</span>
+            <span className="text-[#9945FF]/80 font-medium">Link concepts</span>
           </div>
         </div>
       </div>
