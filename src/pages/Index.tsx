@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useSearchParams } from 'react-router-dom';
@@ -15,7 +14,7 @@ import { AnalyticsDashboard, useAnalytics } from '@/components/AnalyticsDashboar
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { MobileCanvas, useMobileOptimization } from '@/components/MobileOptimization';
 import { cloudStorage } from '@/services/cloudStorage';
-import { BarChart, Settings } from 'lucide-react';
+import { BarChart, Settings, Brain, Network, Lightbulb } from 'lucide-react';
 
 const Index = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
@@ -29,6 +28,7 @@ const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showSettings, setShowSettings] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
   const { analyticsData, trackNodeCreation, trackConnectionCreation, trackAIInsight } = useAnalytics();
   const { isMobile, showMobileOptimizationTip } = useMobileOptimization();
   const { toast } = useToast();
@@ -40,7 +40,11 @@ const Index = () => {
 
       if (nodesParam) {
         try {
-          setNodes(JSON.parse(decodeURIComponent(nodesParam)));
+          const parsedNodes = JSON.parse(decodeURIComponent(nodesParam));
+          if (parsedNodes.length > 0) {
+            setNodes(parsedNodes);
+            setShowWelcome(false);
+          }
         } catch (error) {
           console.error('Failed to parse nodes from URL:', error);
         }
@@ -62,14 +66,12 @@ const Index = () => {
     const saveState = () => {
       const nodesParam = encodeURIComponent(JSON.stringify(nodes));
       const connectionsParam = encodeURIComponent(JSON.stringify(connections));
-
       setSearchParams({ nodes: nodesParam, connections: connectionsParam });
     };
 
     saveState();
   }, [nodes, connections, setSearchParams]);
 
-  // Auto-save integration
   useEffect(() => {
     const handleAutoSave = async () => {
       if (nodes.length > 0 || connections.length > 0) {
@@ -91,7 +93,6 @@ const Index = () => {
     return () => window.removeEventListener('triggerAutoSave', handleAutoSave);
   }, [nodes, connections, aiInsights]);
 
-  // Load data on startup
   useEffect(() => {
     const loadSavedData = async () => {
       const savedData = await cloudStorage.loadFromCloud();
@@ -99,6 +100,9 @@ const Index = () => {
         setNodes(savedData.nodes || []);
         setConnections(savedData.connections || []);
         setAiInsights(savedData.insights || []);
+        if ((savedData.nodes && savedData.nodes.length > 0) || (savedData.connections && savedData.connections.length > 0)) {
+          setShowWelcome(false);
+        }
         toast({
           title: "Data Restored",
           description: "Your previous session has been restored from cloud storage.",
@@ -122,6 +126,7 @@ const Index = () => {
       createdAt: new Date(),
     };
     setNodes([...nodes, newNode]);
+    setShowWelcome(false);
     trackNodeCreation();
     
     if (isMobile) {
@@ -219,7 +224,6 @@ const Index = () => {
     setIsSuggesting(true);
     try {
       const suggestions = await geminiService.generateContentSuggestions(node.content, nodes);
-      // Store suggestions temporarily for display
       console.log('Generated suggestions:', suggestions);
       toast({
         title: "Suggestions Generated",
@@ -252,10 +256,166 @@ const Index = () => {
     }
   }, [nodes, connections, toast]);
 
+  if (showWelcome) {
+    return (
+      <MobileCanvas>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+          {/* Floating settings and analytics buttons */}
+          <div className="fixed top-6 right-6 flex flex-col gap-2 z-50">
+            <Button
+              onClick={() => setShowAnalytics(!showAnalytics)}
+              variant="ghost"
+              size="sm"
+              className="glass-morphism hover-glow w-12 h-12 p-0"
+            >
+              <BarChart className="w-5 h-5 text-teal-400" />
+            </Button>
+            <Button
+              onClick={() => setShowSettings(!showSettings)}
+              variant="ghost"
+              size="sm"
+              className="glass-morphism hover-glow w-12 h-12 p-0"
+            >
+              <Settings className="w-5 h-5 text-orange-400" />
+            </Button>
+          </div>
+
+          {/* Command Center Sidebar */}
+          <div className="fixed left-6 top-6 bottom-6 w-64 glass-morphism rounded-lg p-4 border border-teal-500/30">
+            <div className="flex items-center gap-2 mb-6">
+              <Brain className="w-6 h-6 text-teal-400" />
+              <div>
+                <h2 className="text-lg font-semibold text-teal-400">Neural Hub</h2>
+                <p className="text-xs text-slate-400">Command Center</p>
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              <div className="bg-slate-800/50 rounded-lg p-3 border border-teal-500/20">
+                <div className="text-xs text-teal-300">Thoughts</div>
+                <div className="text-2xl font-bold text-teal-400">{analyticsData.totalNodes}</div>
+                <div className="text-xs text-slate-400">Active nodes</div>
+              </div>
+              <div className="bg-slate-800/50 rounded-lg p-3 border border-orange-500/20">
+                <div className="text-xs text-orange-300">Synapse</div>
+                <div className="text-2xl font-bold text-orange-400">{analyticsData.totalConnections}</div>
+                <div className="text-xs text-slate-400">Connections</div>
+              </div>
+              <div className="bg-slate-800/50 rounded-lg p-3 border border-purple-500/20">
+                <div className="text-xs text-purple-300">Density</div>
+                <div className="text-2xl font-bold text-purple-400">
+                  {analyticsData.totalNodes > 0 ? Math.round((analyticsData.totalConnections / analyticsData.totalNodes) * 100) : 0}%
+                </div>
+                <div className="text-xs text-slate-400">Network strength</div>
+              </div>
+            </div>
+
+            {/* Session Info */}
+            <div className="mb-6 p-3 bg-slate-800/30 rounded-lg border border-green-500/20">
+              <div className="flex items-center gap-2 text-green-400">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span className="text-sm">Session: {analyticsData.sessionDuration}m</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <Button 
+                onClick={() => setShowWelcome(false)} 
+                className="w-full bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/30 text-teal-300"
+              >
+                + New Thought
+              </Button>
+              <Button 
+                onClick={handleGenerateInsights} 
+                disabled={isGenerating}
+                className="w-full bg-gradient-to-r from-teal-500/20 to-purple-500/20 hover:from-teal-500/30 hover:to-purple-500/30 border border-purple-500/30 text-purple-300"
+              >
+                <Brain className="w-4 h-4 mr-2" />
+                Activate AI Brain
+              </Button>
+            </div>
+
+            {/* Network Status */}
+            <div className="mt-6 p-3 bg-slate-800/30 rounded-lg border border-slate-600/30">
+              <div className="flex items-center gap-2 text-slate-300">
+                <Network className="w-4 h-4 text-green-400" />
+                <span className="text-sm">Neural Network</span>
+                <div className="flex items-center gap-1 ml-auto">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <span className="text-xs text-green-400">Online</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Instructions */}
+            <div className="mt-6 text-xs text-slate-400 space-y-1">
+              <div>Double-click canvas → Create thought</div>
+              <div>Click + hold drag → Pan canvas</div>
+              <div>Wheel scroll → Zoom view</div>
+            </div>
+          </div>
+
+          {/* Welcome Content */}
+          <div className="flex-1 flex items-center justify-center min-h-screen">
+            <div className="text-center space-y-8 max-w-2xl mx-auto px-8">
+              <h1 className="text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-orange-400 to-purple-400 animate-pulse-glow mb-4">
+                Synapse
+              </h1>
+              
+              <div className="space-y-2">
+                <h2 className="text-2xl text-slate-300">Your AI-Powered Second Brain</h2>
+                <p className="text-lg text-slate-400 max-w-xl mx-auto">
+                  Capture thoughts, connect ideas, and discover insights through neural networks
+                </p>
+              </div>
+
+              <div className="text-slate-300 text-lg mb-12">
+                Ready to expand your mind?
+              </div>
+
+              {/* Action Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                <div className="glass-morphism rounded-lg p-6 border border-teal-500/30 hover-glow cursor-pointer" onClick={() => setShowWelcome(false)}>
+                  <div className="text-teal-400 text-xl font-semibold mb-2">Create</div>
+                  <div className="text-slate-300 text-sm mb-4">Double-click anywhere or press Space</div>
+                </div>
+                
+                <div className="glass-morphism rounded-lg p-6 border border-orange-500/30 hover-glow">
+                  <div className="text-orange-400 text-xl font-semibold mb-2">Navigate</div>
+                  <div className="text-slate-300 text-sm mb-4">Drag to pan, scroll to zoom</div>
+                </div>
+                
+                <div className="glass-morphism rounded-lg p-6 border border-purple-500/30 hover-glow">
+                  <div className="text-purple-400 text-xl font-semibold mb-2">Connect</div>
+                  <div className="text-slate-300 text-sm mb-4">Click link icon to connect thoughts</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Components */}
+          <AnalyticsDashboard 
+            data={analyticsData}
+            isVisible={showAnalytics}
+          />
+
+          <SettingsPanel
+            isVisible={showSettings}
+            onClose={() => setShowSettings(false)}
+            onToggleAnalytics={() => setShowAnalytics(!showAnalytics)}
+            analyticsEnabled={showAnalytics}
+          />
+        </div>
+      </MobileCanvas>
+    );
+  }
+
   return (
     <MobileCanvas>
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
-        {/* Restore original header */}
+        {/* Canvas Mode Header */}
         <header className="py-6 px-4 border-b border-slate-700 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-orange-500 animate-pulse-glow">
             Synapse
@@ -270,7 +430,7 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Glass-style floating settings and analytics buttons */}
+        {/* Floating settings and analytics buttons */}
         <div className="fixed top-20 right-4 flex flex-col gap-2 z-40">
           <Button
             onClick={() => setShowAnalytics(!showAnalytics)}
@@ -290,7 +450,7 @@ const Index = () => {
           </Button>
         </div>
 
-        {/* Restore original main layout */}
+        {/* Main Canvas Layout */}
         <main className="flex flex-col md:flex-row h-[calc(100vh-100px)]">
           <div className="p-4 w-full md:w-3/4 h-full">
             <div
@@ -376,7 +536,7 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Restore original sidebar */}
+          {/* Sidebar */}
           <div className="p-4 w-full md:w-1/4 h-full border-l border-slate-700 bg-slate-800/50 backdrop-blur-sm">
             {selectedNode ? (
               <div className="space-y-4">
@@ -417,7 +577,7 @@ const Index = () => {
           </div>
         </main>
 
-        {/* Updated Components with glass-morphism */}
+        {/* Components */}
         <AnalyticsDashboard 
           data={analyticsData}
           isVisible={showAnalytics}
