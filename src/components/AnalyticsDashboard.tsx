@@ -32,13 +32,13 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   };
 
   return (
-    <div className="fixed top-16 right-4 w-96 max-h-[80vh] overflow-y-auto bg-slate-900/95 backdrop-blur-sm border border-teal-500/30 rounded-lg p-4 z-50">
+    <div className="fixed top-20 right-20 w-96 max-h-[80vh] overflow-y-auto glass-morphism hover-glow rounded-lg p-4 z-40 border border-teal-500/30">
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-teal-400 mb-4">Analytics Dashboard</h3>
         
         {/* Key Metrics */}
         <div className="grid grid-cols-2 gap-3">
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Brain className="w-4 h-4 text-teal-400" />
@@ -50,7 +50,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Network className="w-4 h-4 text-orange-400" />
@@ -62,7 +62,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Lightbulb className="w-4 h-4 text-yellow-400" />
@@ -74,7 +74,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Clock className="w-4 h-4 text-purple-400" />
@@ -88,7 +88,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </div>
 
         {/* Activity Chart */}
-        <Card className="bg-slate-800/50 border-slate-700">
+        <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-sm">Daily Activity</CardTitle>
           </CardHeader>
@@ -100,9 +100,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 <YAxis stroke="#9CA3AF" fontSize={10} />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '6px'
+                    backgroundColor: 'rgba(11, 61, 61, 0.9)', 
+                    border: '1px solid rgba(0, 255, 209, 0.3)',
+                    borderRadius: '6px',
+                    backdropFilter: 'blur(20px)'
                   }} 
                 />
                 <Line type="monotone" dataKey="nodes" stroke="#14B8A6" strokeWidth={2} />
@@ -113,7 +114,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </Card>
 
         {/* Insight Types */}
-        <Card className="bg-slate-800/50 border-slate-700">
+        <Card className="bg-slate-800/30 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-sm">AI Insight Types</CardTitle>
           </CardHeader>
@@ -121,7 +122,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             <div className="space-y-2">
               {data.insightTypes.map((insight, index) => (
                 <div key={index} className="flex justify-between items-center">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs border-teal-500/30 text-teal-300">
                     {insight.type}
                   </Badge>
                   <span className="text-sm text-gray-400">{insight.count}</span>

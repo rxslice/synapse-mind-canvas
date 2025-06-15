@@ -63,10 +63,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <Card className="w-96 max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+      <Card className="w-96 max-h-[90vh] overflow-y-auto glass-morphism hover-glow border border-teal-500/30">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-teal-400">
             <Settings className="w-5 h-5" />
             Settings
           </CardTitle>
@@ -76,9 +76,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-green-400" />
-              <h3 className="font-medium">API Security</h3>
+              <h3 className="font-medium text-white">API Security</h3>
               {secureApi.isConfigured() && (
-                <Badge variant="outline" className="text-green-400">
+                <Badge variant="outline" className="text-green-400 border-green-400/30">
                   Configured
                 </Badge>
               )}
@@ -89,12 +89,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 placeholder="Enter Gemini API Key"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
+                className="bg-slate-800/50 border-slate-700/50 text-white"
               />
               <div className="flex gap-2">
-                <Button onClick={handleSaveApiKey} size="sm">
+                <Button onClick={handleSaveApiKey} size="sm" className="bg-teal-500/20 hover:bg-teal-500/30 border border-teal-500/30 text-teal-300">
                   Save Key
                 </Button>
-                <Button onClick={handleClearApiKey} variant="outline" size="sm">
+                <Button onClick={handleClearApiKey} variant="outline" size="sm" className="border-orange-500/30 text-orange-300 hover:bg-orange-500/20">
                   Clear
                 </Button>
               </div>
@@ -105,10 +106,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Cloud className="w-4 h-4 text-blue-400" />
-              <h3 className="font-medium">Data Persistence</h3>
+              <h3 className="font-medium text-white">Data Persistence</h3>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm">Auto-save to cloud</span>
+              <span className="text-sm text-slate-300">Auto-save to cloud</span>
               <Switch
                 checked={autoSave}
                 onCheckedChange={setAutoSave}
@@ -120,10 +121,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Smartphone className="w-4 h-4 text-purple-400" />
-              <h3 className="font-medium">Mobile Experience</h3>
+              <h3 className="font-medium text-white">Mobile Experience</h3>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm">Touch optimizations</span>
+              <span className="text-sm text-slate-300">Touch optimizations</span>
               <Switch
                 checked={mobileOptimized}
                 onCheckedChange={setMobileOptimized}
@@ -135,10 +136,10 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <BarChart className="w-4 h-4 text-orange-400" />
-              <h3 className="font-medium">Analytics Dashboard</h3>
+              <h3 className="font-medium text-white">Analytics Dashboard</h3>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm">Show usage insights</span>
+              <span className="text-sm text-slate-300">Show usage insights</span>
               <Switch
                 checked={analyticsEnabled}
                 onCheckedChange={onToggleAnalytics}
@@ -146,8 +147,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-700">
-            <Button onClick={onClose} className="w-full">
+          <div className="pt-4 border-t border-slate-700/50">
+            <Button onClick={onClose} className="w-full bg-slate-700/50 hover:bg-slate-600/50 text-white border border-slate-600/50">
               Close Settings
             </Button>
           </div>

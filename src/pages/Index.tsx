@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useSearchParams } from 'react-router-dom';
@@ -254,6 +255,7 @@ const Index = () => {
   return (
     <MobileCanvas>
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+        {/* Restore original header */}
         <header className="py-6 px-4 border-b border-slate-700 flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-orange-500 animate-pulse-glow">
             Synapse
@@ -268,26 +270,27 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Settings and Analytics buttons */}
-        <div className="fixed top-4 right-4 flex gap-2 z-40">
+        {/* Glass-style floating settings and analytics buttons */}
+        <div className="fixed top-20 right-4 flex flex-col gap-2 z-40">
           <Button
             onClick={() => setShowAnalytics(!showAnalytics)}
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="bg-slate-800/50 border-slate-600 hover:bg-slate-700"
+            className="glass-morphism hover-glow w-12 h-12 p-0"
           >
-            <BarChart className="w-4 h-4" />
+            <BarChart className="w-5 h-5 text-teal-400" />
           </Button>
           <Button
             onClick={() => setShowSettings(!showSettings)}
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className="bg-slate-800/50 border-slate-600 hover:bg-slate-700"
+            className="glass-morphism hover-glow w-12 h-12 p-0"
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="w-5 h-5 text-orange-400" />
           </Button>
         </div>
 
+        {/* Restore original main layout */}
         <main className="flex flex-col md:flex-row h-[calc(100vh-100px)]">
           <div className="p-4 w-full md:w-3/4 h-full">
             <div
@@ -373,7 +376,7 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Sidebar */}
+          {/* Restore original sidebar */}
           <div className="p-4 w-full md:w-1/4 h-full border-l border-slate-700 bg-slate-800/50 backdrop-blur-sm">
             {selectedNode ? (
               <div className="space-y-4">
@@ -414,7 +417,7 @@ const Index = () => {
           </div>
         </main>
 
-        {/* New Components */}
+        {/* Updated Components with glass-morphism */}
         <AnalyticsDashboard 
           data={analyticsData}
           isVisible={showAnalytics}
