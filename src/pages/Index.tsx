@@ -15,9 +15,9 @@ const Index = () => {
 
   useEffect(() => {
     // Welcome message
-    toast("Welcome to Synapse - Your AI-Powered Second Brain", {
-      description: "Double-click anywhere to create your first thought node",
-      duration: 4000,
+    toast("Welcome to Synapse", {
+      description: "Your AI-powered second brain is ready to capture your thoughts",
+      duration: 3000,
     });
   }, []);
 
@@ -35,6 +35,21 @@ const Index = () => {
     };
     setNodes(prev => [...prev, newNode]);
     setSelectedNode(newNode);
+    toast.success("Thought created", { description: "Your new idea has been captured" });
+  };
+
+  const handleQuickCreate = () => {
+    // Create a node at center of viewport
+    const centerX = window.innerWidth / 2 - 100;
+    const centerY = window.innerHeight / 2 - 60;
+    handleCreateNode(centerX, centerY, "Quick Thought");
+  };
+
+  const handleSave = () => {
+    // Simulate save functionality
+    localStorage.setItem('synapse-nodes', JSON.stringify(nodes));
+    localStorage.setItem('synapse-connections', JSON.stringify(connections));
+    toast.success("Progress saved", { description: "Your neural network has been preserved" });
   };
 
   const handleUpdateNode = (updatedNode: Node) => {
@@ -50,6 +65,7 @@ const Index = () => {
       conn.fromNodeId !== nodeId && conn.toNodeId !== nodeId
     ));
     setSelectedNode(null);
+    toast("Thought deleted", { description: "Node and its connections removed" });
   };
 
   const handleCreateConnection = (fromNodeId: string, toNodeId: string) => {
@@ -62,7 +78,20 @@ const Index = () => {
       createdAt: new Date(),
     };
     setConnections(prev => [...prev, newConnection]);
-    toast("Synapse formed!", { description: "Ideas connected successfully" });
+    toast.success("Synapse formed!", { description: "Neural pathway established between thoughts" });
+  };
+
+  const handleToggleAI = () => {
+    setIsAIActive(!isAIActive);
+    if (!isAIActive) {
+      toast("AI Brain activated", { 
+        description: "Your second brain is now analyzing patterns and generating insights" 
+      });
+    } else {
+      toast("AI Brain deactivated", { 
+        description: "AI processing paused" 
+      });
+    }
   };
 
   return (
@@ -85,10 +114,12 @@ const Index = () => {
       />
 
       <Toolbar
-        onToggleAI={() => setIsAIActive(!isAIActive)}
+        onToggleAI={handleToggleAI}
         isAIActive={isAIActive}
         nodeCount={nodes.length}
         connectionCount={connections.length}
+        onQuickCreate={handleQuickCreate}
+        onSave={handleSave}
       />
 
       {selectedNode && (
