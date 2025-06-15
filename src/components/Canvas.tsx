@@ -1,3 +1,4 @@
+
 import { useRef, useEffect, useState, useCallback } from "react";
 import { Node, Connection, CanvasState } from "@/types/canvas";
 import { NodeComponent } from "./NodeComponent";
@@ -31,7 +32,7 @@ export const Canvas = ({
     panY: 0,
   });
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, panX: 0, panY: 0 });
   const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
@@ -59,7 +60,12 @@ export const Canvas = ({
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.target === canvasRef.current) {
       setIsDragging(true);
-      setDragStart({ x: e.clientX - canvasState.panX, y: e.clientY - canvasState.panY });
+      setDragStart({ 
+        x: e.clientX, 
+        y: e.clientY,
+        panX: canvasState.panX,
+        panY: canvasState.panY
+      });
       onSelectNode(null);
     }
   }, [canvasState.panX, canvasState.panY, onSelectNode]);
@@ -71,10 +77,13 @@ export const Canvas = ({
     }
 
     if (isDragging) {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      
       setCanvasState(prev => ({
         ...prev,
-        panX: e.clientX - dragStart.x,
-        panY: e.clientY - dragStart.y,
+        panX: dragStart.panX + deltaX,
+        panY: dragStart.panY + deltaY,
       }));
     }
   }, [isDragging, dragStart]);
@@ -107,6 +116,7 @@ export const Canvas = ({
 
   const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
+    setIsDragging(false);
   }, []);
 
   useEffect(() => {
@@ -117,10 +127,42 @@ export const Canvas = ({
     }
   }, [handleWheel]);
 
+  // Global mouse events for smooth dragging
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        const deltaX = e.clientX - dragStart.x;
+        const deltaY = e.clientY - dragStart.y;
+        
+        setCanvasState(prev => ({
+          ...prev,
+          panX: dragStart.panX + deltaX,
+          panY: dragStart.panY + deltaY,
+        }));
+      }
+    };
+
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        document.removeEventListener('mouseup', handleGlobalMouseUp);
+      };
+    }
+  }, [isDragging, dragStart]);
+
   return (
     <div
       ref={canvasRef}
-      className="w-full h-screen cursor-grab active:cursor-grabbing relative overflow-hidden"
+      className={`w-full h-screen relative overflow-hidden ${
+        isDragging ? 'cursor-grabbing' : 'cursor-grab'
+      }`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
