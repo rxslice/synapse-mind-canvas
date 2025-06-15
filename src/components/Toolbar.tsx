@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Brain, Plus, Zap, Network, Save, MoreHorizontal, Activity, Clock, Target, Move, Minimize2, X, Settings, HelpCircle, Wifi, WifiOff, Heart } from "lucide-react";
@@ -31,7 +32,7 @@ export const Toolbar = ({
 }: ToolbarProps) => {
   const [sessionTime, setSessionTime] = useState(0);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [isMinimized, setIsMinimized] = useState(true);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
