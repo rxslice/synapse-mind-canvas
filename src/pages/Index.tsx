@@ -1,12 +1,115 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState, useEffect } from "react";
+import { Canvas } from "@/components/Canvas";
+import { Toolbar } from "@/components/Toolbar";
+import { NodeInspector } from "@/components/NodeInspector";
+import { AIInsights } from "@/components/AIInsights";
+import { Node, Connection } from "@/types/canvas";
+import { toast } from "sonner";
 
 const Index = () => {
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [isAIActive, setIsAIActive] = useState(false);
+
+  useEffect(() => {
+    // Welcome message
+    toast("Welcome to Synapse - Your AI-Powered Second Brain", {
+      description: "Double-click anywhere to create your first thought node",
+      duration: 4000,
+    });
+  }, []);
+
+  const handleCreateNode = (x: number, y: number, content: string = "New Thought") => {
+    const newNode: Node = {
+      id: `node-${Date.now()}`,
+      x,
+      y,
+      width: 200,
+      height: 120,
+      content,
+      type: "thought",
+      color: "#00FFD1",
+      createdAt: new Date(),
+    };
+    setNodes(prev => [...prev, newNode]);
+    setSelectedNode(newNode);
+  };
+
+  const handleUpdateNode = (updatedNode: Node) => {
+    setNodes(prev => prev.map(node => 
+      node.id === updatedNode.id ? updatedNode : node
+    ));
+    setSelectedNode(updatedNode);
+  };
+
+  const handleDeleteNode = (nodeId: string) => {
+    setNodes(prev => prev.filter(node => node.id !== nodeId));
+    setConnections(prev => prev.filter(conn => 
+      conn.fromNodeId !== nodeId && conn.toNodeId !== nodeId
+    ));
+    setSelectedNode(null);
+  };
+
+  const handleCreateConnection = (fromNodeId: string, toNodeId: string) => {
+    const newConnection: Connection = {
+      id: `conn-${Date.now()}`,
+      fromNodeId,
+      toNodeId,
+      type: "synapse",
+      strength: 0.8,
+      createdAt: new Date(),
+    };
+    setConnections(prev => [...prev, newConnection]);
+    toast("Synapse formed!", { description: "Ideas connected successfully" });
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-[#0B3D3D] relative overflow-hidden">
+      {/* Ambient background effects */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#00FFD1] rounded-full blur-[100px] animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#E8A135] rounded-full blur-[100px] animate-pulse delay-1000"></div>
       </div>
+
+      <Canvas
+        nodes={nodes}
+        connections={connections}
+        onCreateNode={handleCreateNode}
+        onSelectNode={setSelectedNode}
+        onUpdateNode={handleUpdateNode}
+        onDeleteNode={handleDeleteNode}
+        onCreateConnection={handleCreateConnection}
+        selectedNode={selectedNode}
+      />
+
+      <Toolbar
+        onToggleAI={() => setIsAIActive(!isAIActive)}
+        isAIActive={isAIActive}
+        nodeCount={nodes.length}
+        connectionCount={connections.length}
+      />
+
+      {selectedNode && (
+        <NodeInspector
+          node={selectedNode}
+          onUpdate={handleUpdateNode}
+          onDelete={() => handleDeleteNode(selectedNode.id)}
+          onClose={() => setSelectedNode(null)}
+        />
+      )}
+
+      {isAIActive && (
+        <AIInsights
+          nodes={nodes}
+          connections={connections}
+          onSuggestion={(suggestion) => {
+            toast("AI Insight", { description: suggestion });
+          }}
+          onClose={() => setIsAIActive(false)}
+        />
+      )}
     </div>
   );
 };
