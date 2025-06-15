@@ -346,29 +346,37 @@ const Index = () => {
     });
   }, [connections, nodes]);
 
+  const handleAISuggestion = useCallback((suggestion: string) => {
+    console.log('🤖 AI Suggestion received:', suggestion);
+    toast("🧠 AI Neural Insight", { 
+      description: suggestion,
+      duration: 8000
+    });
+  }, []);
+
   const handleToggleAI = useCallback(() => {
     const newState = !isAIActive;
     setIsAIActive(newState);
     
     if (newState) {
-      toast("🤖 AI consciousness activated", { 
-        description: "Your second brain is now analyzing patterns and generating insights",
-        duration: 3000
-      });
+      if (nodes.length === 0) {
+        toast("🤖 AI consciousness activated", { 
+          description: "Create some thoughts first, then AI will analyze your neural network",
+          duration: 4000
+        });
+      } else {
+        toast("🤖 AI consciousness activated", { 
+          description: "Your second brain is now analyzing patterns with real AI intelligence",
+          duration: 4000
+        });
+      }
     } else {
       toast("😴 AI consciousness dormant", { 
-        description: "Pattern analysis paused - reactivate when ready for insights",
+        description: "Real AI analysis paused - reactivate when ready for insights",
         duration: 2000
       });
     }
-  }, [isAIActive]);
-
-  const handleAISuggestion = useCallback((suggestion: string) => {
-    toast("🧠 Neural insight received", { 
-      description: suggestion,
-      duration: 6000
-    });
-  }, []);
+  }, [isAIActive, nodes.length]);
 
   const handleTutorialComplete = useCallback(() => {
     setShowTutorial(false);

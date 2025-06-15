@@ -1,9 +1,11 @@
 
 import { useState, useEffect } from "react";
-import { Node, Connection } from "@/types/canvas";
+import { Node, Connection, AIInsight } from "@/types/canvas";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Brain, Lightbulb, TrendingUp, Zap, X, RefreshCw, Sparkles } from "lucide-react";
+import { Brain, Lightbulb, TrendingUp, Zap, X, RefreshCw, Sparkles, AlertTriangle } from "lucide-react";
+import { geminiService } from "@/services/geminiService";
+import { toast } from "sonner";
 
 interface AIInsightsProps {
   nodes: Node[];
@@ -12,121 +14,102 @@ interface AIInsightsProps {
   onClose: () => void;
 }
 
-interface Insight {
-  id: string;
-  type: 'pattern' | 'suggestion' | 'optimization' | 'creative';
-  title: string;
-  description: string;
-  confidence: number;
-  actionable: boolean;
-}
-
 export const AIInsights = ({ nodes, connections, onSuggestion, onClose }: AIInsightsProps) => {
-  const [insights, setInsights] = useState<Insight[]>([]);
+  const [insights, setInsights] = useState<AIInsight[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedInsight, setSelectedInsight] = useState<string | null>(null);
+  const [connectionSuggestions, setConnectionSuggestions] = useState<Array<{from: string, to: string, reason: string}>>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const generateAdvancedInsights = async () => {
+  const generateRealInsights = async () => {
+    if (nodes.length === 0) {
+      toast.error("No thoughts to analyze", {
+        description: "Create some thoughts first to get AI insights"
+      });
+      return;
+    }
+
     setIsGenerating(true);
+    setError(null);
     
-    // Simulate AI processing with realistic delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const newInsights: Insight[] = [];
-
-    // Analyze network structure
-    if (nodes.length >= 3 && connections.length >= 2) {
-      newInsights.push({
-        id: '1',
-        type: 'pattern',
-        title: 'Emerging Knowledge Clusters',
-        description: `Your neural network shows ${Math.ceil(connections.length / 2)} distinct thought clusters. Consider creating bridge connections between isolated groups to enhance creative potential.`,
-        confidence: 0.85,
-        actionable: true
+    try {
+      console.log('🧠 Generating real AI insights for network:', { 
+        nodes: nodes.length, 
+        connections: connections.length 
       });
-    }
 
-    // Content analysis
-    const contentWords = nodes.map(n => n.content.toLowerCase()).join(' ').split(' ');
-    const uniqueWords = [...new Set(contentWords)].filter(w => w.length > 3);
-    
-    if (uniqueWords.length > 5) {
-      newInsights.push({
-        id: '2',
-        type: 'creative',
-        title: 'Conceptual Synthesis Opportunity',
-        description: `I've identified recurring themes around "${uniqueWords.slice(0, 3).join(', ')}". Consider creating a synthesis node that explores the intersection of these concepts.`,
-        confidence: 0.78,
-        actionable: true
+      const analysis = await geminiService.analyzeNetwork(nodes, connections);
+      setInsights(analysis.insights);
+      
+      // Generate connection suggestions
+      const connSuggestions = await geminiService.suggestConnections(nodes, connections);
+      setConnectionSuggestions(connSuggestions);
+      
+      if (analysis.insights.length > 0) {
+        toast.success("🤖 AI insights generated", {
+          description: `Found ${analysis.insights.length} meaningful patterns in your neural network`
+        });
+      }
+      
+      console.log('✅ AI analysis complete:', analysis);
+      
+    } catch (error) {
+      console.error('❌ AI insight generation failed:', error);
+      setError(error instanceof Error ? error.message : 'Unknown error occurred');
+      
+      toast.error("AI insight generation failed", {
+        description: "Check your internet connection and try again"
       });
-    }
-
-    // Network density analysis
-    const networkDensity = connections.length / (nodes.length * (nodes.length - 1) / 2);
-    if (networkDensity < 0.3 && nodes.length > 4) {
-      newInsights.push({
-        id: '3',
-        type: 'optimization',
-        title: 'Sparse Network Detected',
-        description: `Your thought network has low connectivity (${Math.round(networkDensity * 100)}% density). Adding strategic connections could unlock hidden relationships and boost creative insights.`,
-        confidence: 0.92,
-        actionable: true
-      });
-    }
-
-    // Creative suggestions
-    if (nodes.length > 0) {
-      const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-      newInsights.push({
-        id: '4',
+      
+      // Fallback to basic insight
+      setInsights([{
+        id: `fallback-${Date.now()}`,
         type: 'suggestion',
-        title: 'Perspective Flip Challenge',
-        description: `What if you approached "${randomNode.content}" from the completely opposite angle? Sometimes breakthrough insights come from inverting our assumptions.`,
-        confidence: 0.65,
-        actionable: true
-      });
+        title: 'AI Connection Unavailable',
+        description: 'Unable to generate AI insights. Please check your internet connection and try again.',
+        confidence: 1.0,
+        actionable: false,
+        priority: 'low',
+        createdAt: new Date(),
+      }]);
+      
+    } finally {
+      setIsGenerating(false);
     }
-
-    // Time-based patterns
-    const now = new Date();
-    const recentNodes = nodes.filter(n => now.getTime() - new Date(n.createdAt).getTime() < 5 * 60 * 1000);
-    
-    if (recentNodes.length >= 3) {
-      newInsights.push({
-        id: '5',
-        type: 'pattern',
-        title: 'Creative Flow State Detected',
-        description: `You've created ${recentNodes.length} thoughts in the last 5 minutes. You're in a flow state! Consider setting a timer to capture this momentum before taking a break.`,
-        confidence: 0.88,
-        actionable: false
-      });
-    }
-
-    setInsights(newInsights);
-    setIsGenerating(false);
   };
 
   useEffect(() => {
     if (nodes.length > 0) {
-      generateAdvancedInsights();
+      generateRealInsights();
     }
   }, [nodes.length, connections.length]);
 
-  const getInsightIcon = (type: Insight['type']) => {
+  const getInsightIcon = (type: AIInsight['type']) => {
     switch (type) {
       case 'pattern': return <TrendingUp className="w-4 h-4" />;
       case 'suggestion': return <Lightbulb className="w-4 h-4" />;
       case 'optimization': return <Zap className="w-4 h-4" />;
       case 'creative': return <Sparkles className="w-4 h-4" />;
+      case 'warning': return <AlertTriangle className="w-4 h-4" />;
     }
   };
 
-  const getInsightColor = (type: Insight['type']) => {
+  const getInsightColor = (type: AIInsight['type']) => {
     switch (type) {
       case 'pattern': return '#00FFD1';
       case 'suggestion': return '#E8A135';
       case 'optimization': return '#FF6B6B';
       case 'creative': return '#9945FF';
+      case 'warning': return '#FF9500';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return '#FF6B6B';
+      case 'medium': return '#E8A135';
+      case 'low': return '#00FFD1';
+      default: return '#00FFD1';
     }
   };
 
@@ -154,8 +137,8 @@ export const AIInsights = ({ nodes, connections, onSuggestion, onClose }: AIInsi
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-[#00FFD1]/10" />
               </div>
               <div>
-                <h3 className="text-xl font-light text-[#00FFD1] tracking-wide">Neural Insights</h3>
-                <p className="text-sm text-[#F0F0F0]/60">AI Pattern Recognition</p>
+                <h3 className="text-xl font-light text-[#00FFD1] tracking-wide">AI Neural Insights</h3>
+                <p className="text-sm text-[#F0F0F0]/60">Powered by Gemini AI</p>
               </div>
             </div>
             <Button
@@ -168,6 +151,17 @@ export const AIInsights = ({ nodes, connections, onSuggestion, onClose }: AIInsi
             </Button>
           </div>
 
+          {/* Error Display */}
+          {error && (
+            <div className="p-4 rounded-2xl border border-[#FF6B6B]/30 bg-gradient-to-br from-[#FF6B6B]/20 to-[#FF6B6B]/5">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="w-4 h-4 text-[#FF6B6B]" />
+                <span className="text-sm font-medium text-[#FF6B6B]">AI Connection Error</span>
+              </div>
+              <p className="text-sm text-[#F0F0F0]/80">{error}</p>
+            </div>
+          )}
+
           {isGenerating ? (
             <div className="flex items-center justify-center py-12">
               <div className="text-center space-y-4">
@@ -176,8 +170,8 @@ export const AIInsights = ({ nodes, connections, onSuggestion, onClose }: AIInsi
                   <Brain className="w-6 h-6 text-[#00FFD1] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
                 </div>
                 <div>
-                  <p className="text-[#F0F0F0]/80 font-medium">Analyzing neural patterns...</p>
-                  <p className="text-[#F0F0F0]/50 text-sm">Deep learning in progress</p>
+                  <p className="text-[#F0F0F0]/80 font-medium">Analyzing with Gemini AI...</p>
+                  <p className="text-[#F0F0F0]/50 text-sm">Deep pattern recognition in progress</p>
                 </div>
               </div>
             </div>
@@ -232,6 +226,15 @@ export const AIInsights = ({ nodes, connections, onSuggestion, onClose }: AIInsi
                           >
                             {Math.round(insight.confidence * 100)}%
                           </span>
+                          <span 
+                            className="text-xs px-2 py-1 rounded-full font-medium"
+                            style={{ 
+                              backgroundColor: `${getPriorityColor(insight.priority)}20`,
+                              color: getPriorityColor(insight.priority)
+                            }}
+                          >
+                            {insight.priority}
+                          </span>
                         </div>
                         <p className="text-sm text-[#F0F0F0]/80 leading-relaxed mb-3">
                           {insight.description}
@@ -249,23 +252,45 @@ export const AIInsights = ({ nodes, connections, onSuggestion, onClose }: AIInsi
                   </div>
                 </div>
               ))}
+
+              {/* Connection Suggestions */}
+              {connectionSuggestions.length > 0 && (
+                <div className="p-4 rounded-2xl border border-[#9945FF]/30 bg-gradient-to-br from-[#9945FF]/15 to-transparent">
+                  <h4 className="text-sm font-semibold text-[#9945FF] mb-3 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" />
+                    Suggested Connections
+                  </h4>
+                  <div className="space-y-2">
+                    {connectionSuggestions.map((suggestion, index) => (
+                      <div key={index} className="text-sm text-[#F0F0F0]/80 p-2 rounded-lg bg-[#9945FF]/10">
+                        <div className="font-medium text-[#9945FF] mb-1">
+                          "{suggestion.from}" ↔ "{suggestion.to}"
+                        </div>
+                        <div className="text-xs text-[#F0F0F0]/60">
+                          {suggestion.reason}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* Enhanced Action Button */}
           <Button
-            onClick={generateAdvancedInsights}
-            disabled={isGenerating}
-            className="w-full h-12 bg-gradient-to-r from-[#E8A135]/20 to-[#E8A135]/10 text-[#E8A135] border border-[#E8A135]/40 hover:from-[#E8A135]/30 hover:to-[#E8A135]/20 hover:border-[#E8A135]/60 transition-all duration-300 rounded-2xl font-medium"
+            onClick={generateRealInsights}
+            disabled={isGenerating || nodes.length === 0}
+            className="w-full h-12 bg-gradient-to-r from-[#E8A135]/20 to-[#E8A135]/10 text-[#E8A135] border border-[#E8A135]/40 hover:from-[#E8A135]/30 hover:to-[#E8A135]/20 hover:border-[#E8A135]/60 transition-all duration-300 rounded-2xl font-medium disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
-            {isGenerating ? 'Analyzing...' : 'Generate New Insights'}
+            {isGenerating ? 'Analyzing with AI...' : 'Generate New AI Insights'}
           </Button>
 
           {/* Footer */}
           <div className="text-center pt-4 border-t border-[#00FFD1]/20">
             <p className="text-xs text-[#F0F0F0]/50">
-              AI insights are suggestions to enhance creative thinking
+              Real AI insights powered by Google Gemini
             </p>
           </div>
         </div>
