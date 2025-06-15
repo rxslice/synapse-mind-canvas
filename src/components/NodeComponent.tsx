@@ -28,32 +28,47 @@ export const NodeComponent = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const nodeRef = useRef<HTMLDivElement>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     setEditContent(node.content);
   }, [node.content]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.target === nodeRef.current || (e.target as HTMLElement).closest('.node-header')) {
-      e.stopPropagation();
-      setIsDragging(true);
-      setDragStart({
-        x: e.clientX - node.x,
-        y: e.clientY - node.y,
-      });
-      onSelect();
+    e.stopPropagation();
+    
+    // Don't start dragging if clicking on buttons or editing
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'BUTTON' || target.tagName === 'TEXTAREA' || target.closest('button') || isEditing) {
+      return;
     }
+
+    setIsDragging(true);
+    const rect = nodeRef.current?.getBoundingClientRect();
+    if (rect) {
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    }
+    setDragStart({
+      x: e.clientX - node.x,
+      y: e.clientY - node.y,
+    });
+    onSelect();
   };
 
   const handleMouseMove = (e: MouseEvent) => {
     if (isDragging) {
+      e.preventDefault();
       const newX = e.clientX - dragStart.x;
       const newY = e.clientY - dragStart.y;
       onUpdate({ ...node, x: newX, y: newY });
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: MouseEvent) => {
+    e.stopPropagation();
     setIsDragging(false);
   };
 
@@ -104,8 +119,8 @@ export const NodeComponent = ({
   return (
     <div
       ref={nodeRef}
-      className={`absolute cursor-move select-none transition-all duration-300 ${
-        isDragging ? 'z-50 scale-105' : 'z-10'
+      className={`synapse-node absolute pointer-events-auto select-none transition-all duration-300 ${
+        isDragging ? 'z-50 scale-105 cursor-grabbing' : 'z-10 cursor-grab'
       } ${isConnecting ? 'animate-pulse' : ''}`}
       style={{
         left: node.x,
@@ -128,22 +143,22 @@ export const NodeComponent = ({
       >
         {/* Animated border gradient */}
         <div 
-          className="absolute inset-0 rounded-2xl opacity-30"
+          className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none"
           style={{
             background: `conic-gradient(from 0deg, transparent, ${node.color}, transparent)`,
             animation: isSelected ? 'spin 8s linear infinite' : 'none',
           }}
         />
         <div 
-          className="absolute inset-[2px] rounded-2xl"
+          className="absolute inset-[2px] rounded-2xl pointer-events-none"
           style={{ backgroundColor: `${node.color}10` }}
         />
 
         {/* Content container */}
-        <div className="relative z-10 p-4 h-full flex flex-col">
+        <div className="node-content relative z-10 p-4 h-full flex flex-col pointer-events-auto">
           {/* Header with type and actions */}
-          <div className="node-header flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2 pointer-events-none">
               <span className="text-lg">{getNodeTypeEmoji()}</span>
               <span 
                 className="text-xs font-medium opacity-70"
@@ -154,7 +169,7 @@ export const NodeComponent = ({
             </div>
             
             {/* Action buttons - show on hover or selection */}
-            <div className={`flex gap-1 transition-opacity duration-200 ${
+            <div className={`flex gap-1 transition-opacity duration-200 pointer-events-auto ${
               isHovered || isSelected ? 'opacity-100' : 'opacity-0'
             }`}>
               <button
@@ -200,14 +215,15 @@ export const NodeComponent = ({
                 onChange={(e) => setEditContent(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onBlur={handleSaveEdit}
-                className="w-full h-full resize-none bg-transparent border-none outline-none text-center text-sm leading-relaxed"
+                className="w-full h-full resize-none bg-transparent border-none outline-none text-center text-sm leading-relaxed pointer-events-auto"
                 style={{ color: '#F0F0F0' }}
                 placeholder="Enter your thought..."
                 autoFocus
+                onClick={(e) => e.stopPropagation()}
               />
             ) : (
               <div
-                className="text-center text-sm leading-relaxed font-medium cursor-text"
+                className="text-center text-sm leading-relaxed font-medium cursor-text pointer-events-auto"
                 style={{ color: '#F0F0F0' }}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -220,7 +236,7 @@ export const NodeComponent = ({
           </div>
 
           {/* Timestamp */}
-          <div className="text-xs opacity-50 text-center mt-2" style={{ color: node.color }}>
+          <div className="text-xs opacity-50 text-center mt-2 pointer-events-none" style={{ color: node.color }}>
             {new Date(node.createdAt).toLocaleTimeString([], { 
               hour: '2-digit', 
               minute: '2-digit' 
@@ -252,6 +268,11 @@ export const NodeComponent = ({
             className="absolute inset-0 rounded-2xl opacity-20 pointer-events-none"
             style={{ backgroundColor: node.color }}
           />
+        )}
+
+        {/* Drag indicator */}
+        {isDragging && (
+          <div className="absolute inset-0 rounded-2xl bg-white/10 pointer-events-none" />
         )}
       </div>
     </div>

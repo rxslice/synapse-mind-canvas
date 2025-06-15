@@ -31,12 +31,13 @@ export const Canvas = ({
     panX: 0,
     panY: 0,
   });
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, panX: 0, panY: 0 });
   const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [showCreateHint, setShowCreateHint] = useState(false);
+  const [dragTimeout, setDragTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -81,14 +82,25 @@ export const Canvas = ({
   }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.target === canvasRef.current) {
-      setIsDragging(true);
-      setDragStart({ 
-        x: e.clientX, 
-        y: e.clientY,
-        panX: canvasState.panX,
-        panY: canvasState.panY
-      });
+    const target = e.target as HTMLElement;
+    
+    // Check if we're clicking on a node or its content
+    const nodeElement = target.closest('.synapse-node');
+    const isNodeInteraction = nodeElement || target.closest('.node-content') || target.closest('button') || target.closest('textarea');
+    
+    if (!isNodeInteraction && e.target === canvasRef.current) {
+      // Start canvas dragging with a small delay to differentiate from clicks
+      const timeout = setTimeout(() => {
+        setIsDraggingCanvas(true);
+        setDragStart({ 
+          x: e.clientX, 
+          y: e.clientY,
+          panX: canvasState.panX,
+          panY: canvasState.panY
+        });
+      }, 100);
+      
+      setDragTimeout(timeout);
       onSelectNode(null);
       setConnectingFrom(null);
     }
@@ -100,7 +112,7 @@ export const Canvas = ({
       setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     }
 
-    if (isDragging) {
+    if (isDraggingCanvas) {
       const deltaX = e.clientX - dragStart.x;
       const deltaY = e.clientY - dragStart.y;
       
@@ -110,11 +122,15 @@ export const Canvas = ({
         panY: dragStart.panY + deltaY,
       }));
     }
-  }, [isDragging, dragStart]);
+  }, [isDraggingCanvas, dragStart]);
 
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
+    if (dragTimeout) {
+      clearTimeout(dragTimeout);
+      setDragTimeout(null);
+    }
+    setIsDraggingCanvas(false);
+  }, [dragTimeout]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     if (e.target === canvasRef.current) {
@@ -142,9 +158,13 @@ export const Canvas = ({
 
   const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
-    setIsDragging(false);
+    setIsDraggingCanvas(false);
     setConnectingFrom(null);
-  }, []);
+    if (dragTimeout) {
+      clearTimeout(dragTimeout);
+      setDragTimeout(null);
+    }
+  }, [dragTimeout]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -157,7 +177,7 @@ export const Canvas = ({
   // Global mouse events for smooth dragging
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (isDragging) {
+      if (isDraggingCanvas) {
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
         
@@ -170,10 +190,14 @@ export const Canvas = ({
     };
 
     const handleGlobalMouseUp = () => {
-      setIsDragging(false);
+      setIsDraggingCanvas(false);
+      if (dragTimeout) {
+        clearTimeout(dragTimeout);
+        setDragTimeout(null);
+      }
     };
 
-    if (isDragging) {
+    if (isDraggingCanvas) {
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleGlobalMouseUp);
       
@@ -182,15 +206,15 @@ export const Canvas = ({
         document.removeEventListener('mouseup', handleGlobalMouseUp);
       };
     }
-  }, [isDragging, dragStart]);
+  }, [isDraggingCanvas, dragStart, dragTimeout]);
 
   const networkDensity = nodes.length > 0 ? (connections.length / Math.max(nodes.length - 1, 1)) * 100 : 0;
 
   return (
     <div
       ref={canvasRef}
-      className={`w-full h-screen relative overflow-hidden ${
-        isDragging ? 'cursor-grabbing' : connectingFrom ? 'cursor-crosshair' : 'cursor-grab'
+      className={`w-full h-screen relative overflow-hidden select-none ${
+        isDraggingCanvas ? 'cursor-grabbing' : connectingFrom ? 'cursor-crosshair' : 'cursor-grab'
       }`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -210,7 +234,7 @@ export const Canvas = ({
     >
       {/* Enhanced grid with better visibility */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         style={{
           opacity: isHovering ? 0.2 : 0.12,
           backgroundImage: `
@@ -225,7 +249,7 @@ export const Canvas = ({
 
       {/* Canvas content */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         style={{
           transform: `translate(${canvasState.panX}px, ${canvasState.panY}px) scale(${canvasState.zoom})`,
           transformOrigin: "0 0",
@@ -273,59 +297,6 @@ export const Canvas = ({
               </div>
             </div>
 
-            {/* Elegant brain graphic */}
-            <div className="absolute inset-0 flex items-center justify-center -z-10 scale-150">
-              <svg
-                width="500"
-                height="400"
-                viewBox="0 0 500 400"
-                className="opacity-15"
-                style={{
-                  filter: 'drop-shadow(0 0 30px rgba(0, 255, 209, 0.4))',
-                }}
-              >
-                <defs>
-                  <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#00FFD1" stopOpacity="0.9" />
-                    <stop offset="33%" stopColor="#E8A135" stopOpacity="0.7" />
-                    <stop offset="66%" stopColor="#9945FF" stopOpacity="0.6" />
-                    <stop offset="100%" stopColor="#00FFD1" stopOpacity="0.5" />
-                  </linearGradient>
-                  <filter id="glow">
-                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                    <feMerge> 
-                      <feMergeNode in="coloredBlur"/>
-                      <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                  </filter>
-                </defs>
-                
-                {/* Brain outline */}
-                <path
-                  d="M125 100 C105 80, 145 60, 185 70 C205 50, 245 50, 265 70 C305 60, 345 80, 325 100 C335 120, 325 140, 305 160 C325 180, 305 200, 285 210 C265 230, 225 230, 205 210 C185 230, 145 230, 125 210 C105 200, 85 180, 105 160 C85 140, 95 120, 125 100 Z"
-                  fill="url(#brainGradient)"
-                  stroke="rgba(0, 255, 209, 0.6)"
-                  strokeWidth="2"
-                  filter="url(#glow)"
-                />
-                
-                {/* Neural network nodes */}
-                <g opacity="0.8">
-                  <circle cx="165" cy="120" r="4" fill="#00FFD1" className="animate-pulse" />
-                  <circle cx="205" cy="110" r="4" fill="#E8A135" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
-                  <circle cx="245" cy="130" r="4" fill="#9945FF" className="animate-pulse" style={{ animationDelay: '1s' }} />
-                  <circle cx="185" cy="150" r="4" fill="#00FFD1" className="animate-pulse" style={{ animationDelay: '1.5s' }} />
-                  <circle cx="225" cy="160" r="4" fill="#E8A135" className="animate-pulse" style={{ animationDelay: '2s' }} />
-                  
-                  {/* Connections */}
-                  <line x1="165" y1="120" x2="205" y2="110" stroke="rgba(0, 255, 209, 0.5)" strokeWidth="2" className="animate-pulse" />
-                  <line x1="205" y1="110" x2="245" y2="130" stroke="rgba(232, 161, 53, 0.5)" strokeWidth="2" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
-                  <line x1="185" y1="150" x2="225" y2="160" stroke="rgba(153, 69, 255, 0.5)" strokeWidth="2" className="animate-pulse" style={{ animationDelay: '1s' }} />
-                  <line x1="165" y1="120" x2="185" y2="150" stroke="rgba(0, 255, 209, 0.5)" strokeWidth="2" className="animate-pulse" style={{ animationDelay: '1.5s' }} />
-                </g>
-              </svg>
-            </div>
-
             {/* Instructions with better hierarchy */}
             <div className="mt-12 space-y-6">
               <div className="text-base text-[#F0F0F0]/70 font-medium">
@@ -338,12 +309,12 @@ export const Canvas = ({
                   <div>Double-click anywhere or press Space</div>
                 </div>
                 <div className="bg-[#E8A135]/10 rounded-xl p-4 border border-[#E8A135]/20">
-                  <div className="text-[#E8A135] font-medium mb-2">Connect</div>
-                  <div>Drag between nodes to link ideas</div>
+                  <div className="text-[#E8A135] font-medium mb-2">Navigate</div>
+                  <div>Drag to pan, scroll to zoom</div>
                 </div>
                 <div className="bg-[#9945FF]/10 rounded-xl p-4 border border-[#9945FF]/20">
-                  <div className="text-[#9945FF] font-medium mb-2">Navigate</div>
-                  <div>Scroll to zoom, drag to pan</div>
+                  <div className="text-[#9945FF] font-medium mb-2">Connect</div>
+                  <div>Click link icon to connect thoughts</div>
                 </div>
               </div>
             </div>
@@ -396,7 +367,7 @@ export const Canvas = ({
 
       {/* Create hint notification */}
       {showCreateHint && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-50">
           <div className="bg-[#00FFD1]/20 backdrop-blur-sm border border-[#00FFD1]/40 rounded-xl px-6 py-3 text-[#00FFD1] font-medium animate-fade-in">
             ✨ Thought captured! Click to edit or connect ideas
           </div>
@@ -405,7 +376,7 @@ export const Canvas = ({
 
       {/* Network stats overlay */}
       {nodes.length > 0 && (
-        <div className="absolute bottom-4 left-4 bg-[#0B3D3D]/80 backdrop-blur-sm border border-[#00FFD1]/20 rounded-xl px-4 py-2 text-sm text-[#F0F0F0]/70">
+        <div className="absolute bottom-4 left-4 bg-[#0B3D3D]/80 backdrop-blur-sm border border-[#00FFD1]/20 rounded-xl px-4 py-2 text-sm text-[#F0F0F0]/70 pointer-events-none">
           <div className="flex items-center gap-4">
             <span>{nodes.length} thoughts</span>
             <span>{connections.length} synapses</span>
