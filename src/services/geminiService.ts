@@ -1,5 +1,5 @@
+
 import { Node, Connection, AIInsight } from "@/types/canvas";
-import { secureApi } from './secureApiManager';
 
 export interface GeminiResponse {
   candidates: Array<{
@@ -19,20 +19,16 @@ export interface NetworkAnalysis {
 }
 
 export class GeminiService {
+  private apiKey: string;
   private baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
   private model = 'gemini-2.0-flash-exp';
 
-  private getApiKey(): string | null {
-    return secureApi.getApiKey();
+  constructor(apiKey: string) {
+    this.apiKey = apiKey;
   }
 
   private async makeRequest(prompt: string): Promise<string> {
-    const apiKey = this.getApiKey();
-    if (!apiKey) {
-      throw new Error('No API key configured. Please set up your Gemini API key in settings.');
-    }
-
-    const url = `${this.baseUrl}/${this.model}:generateContent?key=${apiKey}`;
+    const url = `${this.baseUrl}/${this.model}:generateContent?key=${this.apiKey}`;
     
     const requestBody = {
       contents: [{
@@ -260,5 +256,5 @@ Only suggest meaningful connections, not forced ones.`;
   }
 }
 
-// Export singleton instance without hardcoded API key
-export const geminiService = new GeminiService();
+// Export singleton instance
+export const geminiService = new GeminiService('AIzaSyDCQflwwKTBUhHdaU5gqk3KN3YqKUjTKZI');
