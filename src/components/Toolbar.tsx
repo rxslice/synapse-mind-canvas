@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Brain, Plus, Zap, Network, Save, MoreHorizontal, Activity, Clock, Target, Move, Minimize2, X, Settings, HelpCircle } from "lucide-react";
@@ -27,7 +28,7 @@ export const Toolbar = ({
 }: ToolbarProps) => {
   const [sessionTime, setSessionTime] = useState(0);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -90,19 +91,19 @@ export const Toolbar = ({
     <div 
       className="absolute z-50"
       style={{
-        width: '244px', // 20% smaller than 304px
+        width: '220px', // 10% smaller than 244px
         top: `${16 + position.y}px`,
         left: `${16 + position.x}px`,
       }}
     >
-      <Card className="bg-gradient-to-br from-[#0B3D3D]/98 via-[#0A3A3A]/96 to-[#0B3D3D]/94 backdrop-blur-xl border border-[#00FFD1]/40 shadow-[0_0_32px_rgba(0,255,209,0.2)] rounded-2xl overflow-hidden">
+      <Card className={`bg-gradient-to-br from-[#0B3D3D]/98 via-[#0A3A3A]/96 to-[#0B3D3D]/94 backdrop-blur-xl border border-[#00FFD1]/40 shadow-[0_0_32px_rgba(0,255,209,0.2)] rounded-2xl overflow-hidden transition-all duration-550 ${isMinimized ? 'animate-pulse' : ''}`}>
         {/* Animated border */}
         <div className="absolute inset-0 rounded-2xl">
           <div 
             className="absolute inset-0 rounded-2xl opacity-30"
             style={{
               background: `conic-gradient(from 0deg, transparent, #00FFD1, transparent, #E8A135, transparent)`,
-              animation: 'spin 20s linear infinite',
+              animation: 'spin 22s linear infinite',
             }}
           />
           <div className="absolute inset-[2px] rounded-2xl bg-gradient-to-br from-[#0B3D3D]/98 via-[#0A3A3A]/96 to-[#0B3D3D]/94" />
@@ -131,7 +132,7 @@ export const Toolbar = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 w-6 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-300"
+                      className="h-6 w-6 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-330"
                     >
                       <MoreHorizontal className="w-3 h-3" />
                     </Button>
@@ -167,7 +168,7 @@ export const Toolbar = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsMinimized(!isMinimized)}
-                  className="h-6 w-6 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-300"
+                  className="h-6 w-6 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-330"
                 >
                   <Minimize2 className="w-3 h-3" />
                 </Button>
@@ -179,7 +180,7 @@ export const Toolbar = ({
                 {/* Enhanced Stats Grid - smaller */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-2 border border-[#00FFD1]/30 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#00FFD1]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#00FFD1]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-330" />
                     <div className="relative z-10">
                       <div className="flex items-center gap-1 mb-1">
                         <Target className="w-3 h-3 text-[#00FFD1]" />
@@ -191,7 +192,7 @@ export const Toolbar = ({
                   </div>
                   
                   <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-2 border border-[#E8A135]/30 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#E8A135]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#E8A135]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-330" />
                     <div className="relative z-10">
                       <div className="flex items-center gap-1 mb-1">
                         <Network className="w-3 h-3 text-[#E8A135]" />
@@ -203,7 +204,7 @@ export const Toolbar = ({
                   </div>
 
                   <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-2 border border-[#9945FF]/30 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#9945FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#9945FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-330" />
                     <div className="relative z-10">
                       <div className="flex items-center gap-1 mb-1">
                         <Activity className="w-3 h-3 text-[#9945FF]" />
@@ -233,7 +234,7 @@ export const Toolbar = ({
                   <Button
                     onClick={onQuickCreate}
                     size="sm"
-                    className="flex-1 h-8 bg-gradient-to-r from-[#00FFD1]/20 to-[#00FFD1]/10 text-[#00FFD1] border border-[#00FFD1]/40 hover:from-[#00FFD1]/30 hover:to-[#00FFD1]/20 hover:border-[#00FFD1]/60 transition-all duration-300 rounded-lg font-medium text-sm"
+                    className="flex-1 h-8 bg-gradient-to-r from-[#00FFD1]/20 to-[#00FFD1]/10 text-[#00FFD1] border border-[#00FFD1]/40 hover:from-[#00FFD1]/30 hover:to-[#00FFD1]/20 hover:border-[#00FFD1]/60 transition-all duration-330 rounded-lg font-medium text-sm"
                   >
                     <Plus className="w-3 h-3 mr-1" />
                     New Thought
@@ -242,7 +243,7 @@ export const Toolbar = ({
                   <Button
                     onClick={handleSave}
                     size="sm"
-                    className="h-8 px-2 bg-gradient-to-r from-[#083838]/60 to-[#083838]/40 text-[#F0F0F0]/70 border border-[#00FFD1]/20 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 hover:border-[#00FFD1]/40 transition-all duration-300 rounded-lg"
+                    className="h-8 px-2 bg-gradient-to-r from-[#083838]/60 to-[#083838]/40 text-[#F0F0F0]/70 border border-[#00FFD1]/20 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 hover:border-[#00FFD1]/40 transition-all duration-330 rounded-lg"
                   >
                     <Save className="w-3 h-3" />
                   </Button>
@@ -251,7 +252,7 @@ export const Toolbar = ({
                 {/* Enhanced AI Toggle - smaller */}
                 <Button
                   onClick={onToggleAI}
-                  className={`w-full h-10 text-sm font-semibold transition-all duration-500 rounded-lg relative overflow-hidden ${
+                  className={`w-full h-10 text-sm font-semibold transition-all duration-550 rounded-lg relative overflow-hidden ${
                     isAIActive
                       ? "bg-gradient-to-r from-[#00FFD1] to-[#00FFD1]/90 text-[#0B3D3D] shadow-[0_0_24px_rgba(0,255,209,0.5)] hover:shadow-[0_0_32px_rgba(0,255,209,0.7)]"
                       : "bg-gradient-to-r from-[#0B3D3D] to-[#083838] text-[#00FFD1] border-2 border-[#00FFD1]/50 hover:bg-gradient-to-r hover:from-[#00FFD1]/10 hover:to-[#00FFD1]/5 hover:border-[#00FFD1]/70"
@@ -303,3 +304,4 @@ export const Toolbar = ({
     </div>
   );
 };
+
