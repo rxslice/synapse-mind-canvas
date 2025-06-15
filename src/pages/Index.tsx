@@ -7,7 +7,10 @@ import { Tutorial } from "@/components/Tutorial";
 import { SessionManager } from "@/components/SessionManager";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { InsightNotification } from "@/components/InsightNotification";
+import { SettingsPanel } from "@/components/SettingsPanel";
+import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { Button } from "@/components/ui/button";
+import { Settings, BarChart } from "lucide-react";
 import { Node, Connection } from "@/types/canvas";
 import { toast } from "sonner";
 
@@ -26,6 +29,19 @@ const Index = () => {
   const [lastInsightCheck, setLastInsightCheck] = useState<Date>(new Date());
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [networkHealth, setNetworkHealth] = useState(100);
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false);
+  const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
+  const [appSettings, setAppSettings] = useState({
+    autoSave: true,
+    aiEnabled: true,
+    darkMode: true,
+    animationsEnabled: true,
+    soundEnabled: false,
+    autoSaveInterval: 30,
+    networkHealth: true,
+    notifications: true,
+    theme: 'neural'
+  });
 
   // Load saved data on mount with better error handling
   useEffect(() => {
@@ -78,7 +94,6 @@ const Index = () => {
               duration: 3000,
             });
           } else if (!hasSeenTutorial) {
-            // Show the startup configuration from the screenshot
             toast("Welcome to Synapse", {
               description: "Your AI-Powered Second Brain - Ready to expand your mind?",
               duration: 6000,
@@ -423,6 +438,18 @@ const Index = () => {
     setShowInsightNotification(false);
   }, []);
 
+  const handleSettingChange = useCallback((key: string, value: any) => {
+    setAppSettings(prev => ({ ...prev, [key]: value }));
+    
+    // Apply specific setting changes
+    if (key === 'autoSave') {
+      setAutoSaveEnabled(value);
+    }
+    if (key === 'aiEnabled' && !value) {
+      setIsAIActive(false);
+    }
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0B3D3D] flex items-center justify-center">
@@ -485,6 +512,23 @@ const Index = () => {
           </Button>
         </div>
 
+        {/* Floating Action Icons - Upper Right Corner */}
+        <div className="fixed top-4 right-4 z-40 flex flex-col gap-3">
+          <Button
+            onClick={() => setShowSettingsPanel(true)}
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B3D3D]/90 to-[#083838]/80 backdrop-blur-xl border border-[#00FFD1]/40 text-[#00FFD1] hover:shadow-[0_0_20px_rgba(0,255,209,0.3)] hover:scale-110 transition-all duration-300 p-0"
+          >
+            <Settings className="w-5 h-5" />
+          </Button>
+          
+          <Button
+            onClick={() => setShowAnalyticsDashboard(true)}
+            className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B3D3D]/90 to-[#083838]/80 backdrop-blur-xl border border-[#E8A135]/40 text-[#E8A135] hover:shadow-[0_0_20px_rgba(232,161,53,0.3)] hover:scale-110 transition-all duration-300 p-0"
+          >
+            <BarChart className="w-5 h-5" />
+          </Button>
+        </div>
+
         <Toolbar
           onToggleAI={handleToggleAI}
           isAIActive={isAIActive}
@@ -516,6 +560,23 @@ const Index = () => {
           💾 Auto-saving...
         </div>
       )}
+
+      {/* Floating Action Icons - Upper Right Corner */}
+      <div className="fixed top-4 right-4 z-40 flex flex-col gap-3">
+        <Button
+          onClick={() => setShowSettingsPanel(true)}
+          className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B3D3D]/90 to-[#083838]/80 backdrop-blur-xl border border-[#00FFD1]/40 text-[#00FFD1] hover:shadow-[0_0_20px_rgba(0,255,209,0.3)] hover:scale-110 transition-all duration-300 p-0"
+        >
+          <Settings className="w-5 h-5" />
+        </Button>
+        
+        <Button
+          onClick={() => setShowAnalyticsDashboard(true)}
+          className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B3D3D]/90 to-[#083838]/80 backdrop-blur-xl border border-[#E8A135]/40 text-[#E8A135] hover:shadow-[0_0_20px_rgba(232,161,53,0.3)] hover:scale-110 transition-all duration-300 p-0"
+        >
+          <BarChart className="w-5 h-5" />
+        </Button>
+      </div>
 
       {/* Keyboard Shortcuts Handler */}
       <KeyboardShortcuts
@@ -590,6 +651,20 @@ const Index = () => {
         onLoadSession={handleLoadSession}
         isOpen={showSessionManager}
         onClose={() => setShowSessionManager(false)}
+      />
+
+      <SettingsPanel
+        isOpen={showSettingsPanel}
+        onClose={() => setShowSettingsPanel(false)}
+        onSettingChange={handleSettingChange}
+      />
+
+      <AnalyticsDashboard
+        nodes={nodes}
+        connections={connections}
+        isOpen={showAnalyticsDashboard}
+        onClose={() => setShowAnalyticsDashboard(false)}
+        networkHealth={networkHealth}
       />
     </div>
   );
