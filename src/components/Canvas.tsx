@@ -34,6 +34,7 @@ export const Canvas = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
@@ -64,6 +65,11 @@ export const Canvas = ({
   }, [canvasState.panX, canvasState.panY, onSelectNode]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (rect) {
+      setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    }
+
     if (isDragging) {
       setCanvasState(prev => ({
         ...prev,
@@ -113,25 +119,49 @@ export const Canvas = ({
       onDoubleClick={handleDoubleClick}
       style={{
         background: `
-          radial-gradient(circle at 20% 50%, rgba(0, 255, 209, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 80% 20%, rgba(232, 161, 53, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 40% 80%, rgba(0, 255, 209, 0.05) 0%, transparent 50%),
-          #0B3D3D
+          radial-gradient(circle at 20% 50%, rgba(0, 255, 209, 0.12) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(232, 161, 53, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 40% 80%, rgba(255, 0, 255, 0.06) 0%, transparent 50%),
+          radial-gradient(circle at 60% 30%, rgba(192, 192, 192, 0.04) 0%, transparent 50%),
+          linear-gradient(135deg, #0B3D3D 0%, #0A3A3A 50%, #0B3D3D 100%)
         `,
       }}
     >
-      {/* Grid pattern */}
+      {/* Enhanced grid pattern with depth */}
       <div
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-[0.15]"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(0, 255, 209, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 209, 0.3) 1px, transparent 1px)
+            linear-gradient(rgba(0, 255, 209, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 209, 0.4) 1px, transparent 1px),
+            linear-gradient(rgba(0, 255, 209, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 209, 0.1) 1px, transparent 1px)
           `,
-          backgroundSize: `${50 * canvasState.zoom}px ${50 * canvasState.zoom}px`,
+          backgroundSize: `
+            ${50 * canvasState.zoom}px ${50 * canvasState.zoom}px,
+            ${50 * canvasState.zoom}px ${50 * canvasState.zoom}px,
+            ${10 * canvasState.zoom}px ${10 * canvasState.zoom}px,
+            ${10 * canvasState.zoom}px ${10 * canvasState.zoom}px
+          `,
           transform: `translate(${canvasState.panX % (50 * canvasState.zoom)}px, ${canvasState.panY % (50 * canvasState.zoom)}px)`,
         }}
       />
+
+      {/* Floating ambient particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-[#00FFD1] rounded-full opacity-30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `float ${10 + Math.random() * 20}s infinite linear`,
+              animationDelay: `${Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
 
       {/* Canvas content */}
       <div
@@ -166,15 +196,39 @@ export const Canvas = ({
         ))}
       </div>
 
-      {/* Instructions overlay */}
+      {/* Enhanced welcome overlay */}
       {nodes.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-center text-[#F0F0F0] opacity-60">
-            <div className="text-4xl font-light mb-4">Welcome to Synapse</div>
-            <div className="text-lg">Double-click anywhere to create your first thought</div>
-            <div className="text-sm mt-2 opacity-75">Scroll to zoom • Drag to pan</div>
+          <div className="text-center text-[#F0F0F0] opacity-70 max-w-lg">
+            <div className="text-5xl font-extralight mb-6 bg-gradient-to-r from-[#00FFD1] via-[#E8A135] to-[#00FFD1] bg-clip-text text-transparent">
+              Welcome to Synapse
+            </div>
+            <div className="text-xl font-light mb-4">Your AI-Powered Second Brain</div>
+            <div className="text-sm opacity-75 space-y-2">
+              <div>✨ Double-click anywhere to birth your first thought</div>
+              <div>🔍 Scroll to zoom through dimensions</div>
+              <div>🌊 Drag to navigate the infinite canvas</div>
+              <div>🔗 Connect ideas to form neural pathways</div>
+            </div>
           </div>
         </div>
+      )}
+
+      {/* Connection preview line */}
+      {connectingFrom && (
+        <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 100 }}>
+          <line
+            x1={(nodes.find(n => n.id === connectingFrom)?.x || 0) + 200}
+            y1={(nodes.find(n => n.id === connectingFrom)?.y || 0) + 60}
+            x2={mousePosition.x}
+            y2={mousePosition.y}
+            stroke="#E8A135"
+            strokeWidth="2"
+            strokeDasharray="5,5"
+            opacity="0.8"
+            className="animate-pulse"
+          />
+        </svg>
       )}
     </div>
   );
