@@ -128,9 +128,43 @@ body {
   }
 }
 
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes brain-wave {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 /* Utility classes */
 .animate-synapse-flow {
-  animation: synapse-flow 2s linear infinite;
+  animation: synapse-flow 2.2s linear infinite; /* 10% slower */
 }
 
 .animate-pulse-glow {
@@ -138,23 +172,36 @@ body {
 }
 
 .animate-neural-pulse {
-  animation: neural-pulse 3s ease-in-out infinite;
+  animation: neural-pulse 3.3s ease-in-out infinite; /* 10% slower */
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 6.6s ease-in-out infinite; /* 10% slower */
 }
 
 .animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
+  animation: fade-in 0.55s ease-out forwards; /* 10% slower */
 }
 
 .animate-slide-up {
-  animation: slide-up 0.6s ease-out forwards;
+  animation: slide-up 0.66s ease-out forwards; /* 10% slower */
 }
 
 .animate-bounce-in {
-  animation: bounce-in 0.8s ease-out forwards;
+  animation: bounce-in 0.88s ease-out forwards; /* 10% slower */
+}
+
+.animate-gentle-pulse {
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.animate-brain-wave {
+  animation: brain-wave 4s ease-in-out infinite;
+  background-size: 400% 400%;
 }
 
 .glass-morphism {
@@ -181,7 +228,7 @@ body {
 
 /* Enhanced hover effects */
 .hover-scale {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease; /* 10% slower */
 }
 
 .hover-scale:hover {
@@ -189,7 +236,7 @@ body {
 }
 
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.33s ease, box-shadow 0.33s ease; /* 10% slower */
 }
 
 .hover-lift:hover {
@@ -199,13 +246,13 @@ body {
 
 /* Node selection styles */
 .node-selected {
-  animation: neural-pulse 2s ease-in-out infinite;
+  animation: neural-pulse 2.2s ease-in-out infinite; /* 10% slower */
 }
 
 /* Connection animations */
 .connection-flow {
   stroke-dasharray: 10, 5;
-  animation: synapse-flow 2s linear infinite;
+  animation: synapse-flow 2.2s linear infinite; /* 10% slower */
 }
 
 /* Backdrop blur support */
@@ -224,7 +271,7 @@ body {
 
 /* Smooth transitions for all interactive elements */
 * {
-  transition: box-shadow 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
+  transition: box-shadow 0.33s ease, transform 0.22s ease, opacity 0.22s ease; /* 10% slower */
 }
 
 /* Loading animations */
@@ -273,6 +320,38 @@ body {
 ::-moz-selection {
   background-color: rgba(0, 255, 209, 0.3);
   color: #F0F0F0;
+}
+
+/* Enhanced productivity features */
+.thought-bubble {
+  position: relative;
+  overflow: hidden;
+}
+
+.thought-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 209, 0.1), transparent);
+  transition: left 0.6s;
+}
+
+.thought-bubble:hover::before {
+  left: 100%;
+}
+
+.neural-glow {
+  box-shadow: 
+    0 0 10px rgba(0, 255, 209, 0.3),
+    0 0 20px rgba(0, 255, 209, 0.2),
+    0 0 30px rgba(0, 255, 209, 0.1);
+}
+
+.insight-pulse {
+  animation: gentle-pulse 2s ease-in-out infinite;
 }
 
 /* Responsive utilities */

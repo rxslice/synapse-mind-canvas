@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Canvas } from "@/components/Canvas";
 import { Toolbar } from "@/components/Toolbar";
@@ -25,6 +24,8 @@ const Index = () => {
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [showInsightNotification, setShowInsightNotification] = useState(false);
   const [lastInsightCheck, setLastInsightCheck] = useState<Date>(new Date());
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [networkHealth, setNetworkHealth] = useState(100);
 
   // Load saved data on mount with better error handling
   useEffect(() => {
@@ -98,12 +99,13 @@ const Index = () => {
     loadSavedData();
   }, []);
 
-  // Enhanced auto-save with error recovery
+  // Enhanced auto-save with visual feedback
   useEffect(() => {
     if (!autoSaveEnabled || isLoading) return;
 
     const autoSaveTimer = setTimeout(() => {
       try {
+        setIsAutoSaving(true);
         const nodeData = JSON.stringify(nodes);
         const connectionData = JSON.stringify(connections);
         const aiStateData = JSON.stringify(isAIActive);
@@ -119,17 +121,40 @@ const Index = () => {
             timestamp: new Date().toISOString()
           });
         }
+        
+        setTimeout(() => setIsAutoSaving(false), 1000);
       } catch (error) {
         console.error('❌ Auto-save failed:', error);
         toast.error("Auto-save failed", {
           description: "Your work might not be saved. Try manually saving.",
           duration: 5000
         });
+        setIsAutoSaving(false);
       }
     }, 2000);
 
     return () => clearTimeout(autoSaveTimer);
   }, [nodes, connections, isAIActive, autoSaveEnabled, isLoading]);
+
+  // Calculate network health based on connections and node activity
+  useEffect(() => {
+    if (nodes.length === 0) {
+      setNetworkHealth(100);
+      return;
+    }
+
+    const connectionRatio = connections.length / Math.max(nodes.length, 1);
+    const recentActivity = nodes.filter(node => {
+      const timeSince = new Date().getTime() - node.createdAt.getTime();
+      return timeSince < 24 * 60 * 60 * 1000; // 24 hours
+    }).length;
+    
+    const activityScore = (recentActivity / nodes.length) * 100;
+    const connectionScore = Math.min(connectionRatio * 50, 100);
+    const health = Math.round((activityScore + connectionScore) / 2);
+    
+    setNetworkHealth(Math.max(health, 20)); // Minimum 20% health
+  }, [nodes, connections]);
 
   // Insight notification system - check twice daily
   useEffect(() => {
@@ -168,6 +193,9 @@ const Index = () => {
   }, [nodes, connections, selectedNode]);
 
   const handleCreateNode = useCallback((x: number, y: number, content: string = "New Thought") => {
+    const thoughtTypes = ["thought", "idea", "insight", "concept", "inspiration"];
+    const nodeColors = ["#00FFD1", "#E8A135", "#9945FF", "#FF6B6B", "#4ECDC4"];
+    
     const newNode: Node = {
       id: `node-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       x,
@@ -176,32 +204,35 @@ const Index = () => {
       height: 120,
       content,
       type: "thought",
-      color: "#00FFD1",
+      color: nodeColors[Math.floor(Math.random() * nodeColors.length)],
       createdAt: new Date(),
     };
     
     setNodes(prev => [...prev, newNode]);
     setSelectedNode(newNode);
     
-    toast.success("Thought crystallized", { 
+    // Enhanced success feedback
+    toast.success("💡 Thought crystallized", { 
       description: "Your new idea has been captured in the neural network",
       duration: 2000
     });
   }, []);
 
   const handleQuickCreate = useCallback(() => {
-    // Create node at center with slight randomization to avoid overlap
     const centerX = (window.innerWidth / 2 - 100) + (Math.random() - 0.5) * 100;
     const centerY = (window.innerHeight / 2 - 60) + (Math.random() - 0.5) * 100;
     
     const thoughtPrompts = [
-      "Brilliant Insight",
-      "Creative Spark", 
-      "Eureka Moment",
-      "Deep Thought",
-      "Innovation Seed",
-      "Mind Flash",
-      "Breakthrough Idea"
+      "🧠 Brilliant Insight",
+      "⚡ Creative Spark", 
+      "💡 Eureka Moment",
+      "🎯 Deep Thought",
+      "🌱 Innovation Seed",
+      "✨ Mind Flash",
+      "🚀 Breakthrough Idea",
+      "🔮 Vision Quest",
+      "🎨 Creative Flow",
+      "🧩 Missing Piece"
     ];
     
     const randomPrompt = thoughtPrompts[Math.floor(Math.random() * thoughtPrompts.length)];
@@ -210,6 +241,7 @@ const Index = () => {
 
   const handleSave = useCallback(() => {
     try {
+      setIsAutoSaving(true);
       const nodeData = JSON.stringify(nodes);
       const connectionData = JSON.stringify(connections);
       const aiStateData = JSON.stringify(isAIActive);
@@ -218,16 +250,19 @@ const Index = () => {
       localStorage.setItem('synapse-connections', connectionData);
       localStorage.setItem('synapse-ai-active', aiStateData);
       
-      toast.success("Neural network crystallized", { 
+      toast.success("🧠 Neural network crystallized", { 
         description: `Saved ${nodes.length} thoughts and ${connections.length} synapses`,
         duration: 3000
       });
+      
+      setTimeout(() => setIsAutoSaving(false), 1000);
     } catch (error) {
       console.error('Save failed:', error);
-      toast.error("Crystallization failed", {
+      toast.error("❌ Crystallization failed", {
         description: "Unable to save your neural network. Check your storage space.",
         duration: 5000
       });
+      setIsAutoSaving(false);
     }
   }, [nodes, connections, isAIActive]);
 
@@ -255,30 +290,28 @@ const Index = () => {
       setSelectedNode(null);
     }
     
-    toast("Thought dissolved", { 
+    toast("🗑️ Thought dissolved", { 
       description: `"${nodeToDelete?.content || 'Node'}" and ${affectedConnections.length} connection(s) removed`,
       duration: 3000
     });
   }, [nodes, connections, selectedNode]);
 
   const handleCreateConnection = useCallback((fromNodeId: string, toNodeId: string) => {
-    // Prevent self-connections
     if (fromNodeId === toNodeId) {
-      toast.error("Self-reflection detected", {
+      toast.error("🔄 Self-reflection detected", {
         description: "Nodes cannot connect to themselves - try connecting different thoughts",
         duration: 3000
       });
       return;
     }
 
-    // Check for existing connection (bidirectional)
     const existingConnection = connections.find(conn => 
       (conn.fromNodeId === fromNodeId && conn.toNodeId === toNodeId) ||
       (conn.fromNodeId === toNodeId && conn.toNodeId === fromNodeId)
     );
 
     if (existingConnection) {
-      toast.error("Synapse already exists", {
+      toast.error("🔗 Synapse already exists", {
         description: "These thoughts are already connected through the neural pathway",
         duration: 3000
       });
@@ -289,7 +322,7 @@ const Index = () => {
     const toNode = nodes.find(n => n.id === toNodeId);
     
     if (!fromNode || !toNode) {
-      toast.error("Connection failed", {
+      toast.error("❌ Connection failed", {
         description: "One or both nodes no longer exist",
         duration: 3000
       });
@@ -301,13 +334,13 @@ const Index = () => {
       fromNodeId,
       toNodeId,
       type: "synapse",
-      strength: 0.7 + Math.random() * 0.3, // Random strength between 0.7-1.0
+      strength: 0.7 + Math.random() * 0.3,
       createdAt: new Date(),
     };
     
     setConnections(prev => [...prev, newConnection]);
     
-    toast.success("Neural pathway formed!", { 
+    toast.success("⚡ Neural pathway formed!", { 
       description: `Connected "${fromNode.content}" ↔ "${toNode.content}"`,
       duration: 3000
     });
@@ -318,12 +351,12 @@ const Index = () => {
     setIsAIActive(newState);
     
     if (newState) {
-      toast("AI consciousness activated", { 
+      toast("🤖 AI consciousness activated", { 
         description: "Your second brain is now analyzing patterns and generating insights",
         duration: 3000
       });
     } else {
-      toast("AI consciousness dormant", { 
+      toast("😴 AI consciousness dormant", { 
         description: "Pattern analysis paused - reactivate when ready for insights",
         duration: 2000
       });
@@ -342,7 +375,7 @@ const Index = () => {
     localStorage.setItem('synapse-tutorial-completed', 'true');
     
     if (isFirstVisit) {
-      toast.success("Welcome to your neural network!", {
+      toast.success("🎉 Welcome to your neural network!", {
         description: "You're ready to start capturing and connecting your thoughts",
         duration: 4000
       });
@@ -386,16 +419,17 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-[#0B3D3D] flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl font-extralight mb-4 bg-gradient-to-r from-[#00FFD1] to-[#E8A135] bg-clip-text text-transparent animate-pulse">
+          <div className="text-6xl font-extralight mb-4 bg-gradient-to-r from-[#00FFD1] to-[#E8A135] bg-clip-text text-transparent animate-pulse-glow">
             Synapse
           </div>
-          <div className="text-lg text-[#F0F0F0]/70">Initializing neural network...</div>
+          <div className="text-lg text-[#F0F0F0]/70 mb-4">Initializing neural network...</div>
+          <div className="w-16 h-16 border-4 border-[#00FFD1]/30 border-t-[#00FFD1] rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
     );
   }
 
-  // Show startup configuration screen for first-time users
+  // Enhanced startup configuration screen
   if (isFirstVisit && !showTutorial && nodes.length === 0) {
     return (
       <div className="min-h-screen bg-[#0B3D3D] relative overflow-hidden flex items-center justify-center">
@@ -407,7 +441,7 @@ const Index = () => {
         </div>
 
         <div className="text-center relative z-10 max-w-4xl mx-auto px-6">
-          <div className="text-8xl font-extralight mb-6 bg-gradient-to-r from-[#00FFD1] via-[#E8A135] to-[#00FFD1] bg-clip-text text-transparent">
+          <div className="text-8xl font-extralight mb-6 bg-gradient-to-r from-[#00FFD1] via-[#E8A135] to-[#00FFD1] bg-clip-text text-transparent animate-pulse-glow">
             Synapse
           </div>
           <div className="text-2xl text-[#F0F0F0]/80 mb-4 font-light">Your AI-Powered Second Brain</div>
@@ -419,27 +453,27 @@ const Index = () => {
           <div className="text-lg text-[#F0F0F0]/70 mb-8">Ready to expand your mind?</div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-12">
-            <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-2xl p-6 border border-[#00FFD1]/30">
-              <h3 className="text-[#00FFD1] font-semibold mb-2">Create</h3>
+            <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-2xl p-6 border border-[#00FFD1]/30 hover:scale-105 transition-all duration-300">
+              <h3 className="text-[#00FFD1] font-semibold mb-2">💡 Create</h3>
               <p className="text-[#F0F0F0]/70 text-sm mb-3">Double-click anywhere or press Space</p>
             </div>
             
-            <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-2xl p-6 border border-[#E8A135]/30">
-              <h3 className="text-[#E8A135] font-semibold mb-2">Navigate</h3>
+            <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-2xl p-6 border border-[#E8A135]/30 hover:scale-105 transition-all duration-300">
+              <h3 className="text-[#E8A135] font-semibold mb-2">🧭 Navigate</h3>
               <p className="text-[#F0F0F0]/70 text-sm mb-3">Drag to pan, scroll to zoom</p>
             </div>
             
-            <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-2xl p-6 border border-[#9945FF]/30">
-              <h3 className="text-[#9945FF] font-semibold mb-2">Connect</h3>
+            <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-2xl p-6 border border-[#9945FF]/30 hover:scale-105 transition-all duration-300">
+              <h3 className="text-[#9945FF] font-semibold mb-2">🔗 Connect</h3>
               <p className="text-[#F0F0F0]/70 text-sm mb-3">Click link icon to connect thoughts</p>
             </div>
           </div>
 
           <Button
             onClick={handleQuickCreate}
-            className="bg-gradient-to-r from-[#00FFD1] to-[#00FFD1]/90 text-[#0B3D3D] hover:shadow-[0_0_32px_rgba(0,255,209,0.5)] text-lg px-8 py-3 rounded-xl font-medium"
+            className="bg-gradient-to-r from-[#00FFD1] to-[#00FFD1]/90 text-[#0B3D3D] hover:shadow-[0_0_32px_rgba(0,255,209,0.5)] text-lg px-8 py-3 rounded-xl font-medium hover:scale-105 transition-all duration-300"
           >
-            Start Your Neural Journey
+            🚀 Start Your Neural Journey
           </Button>
         </div>
 
@@ -452,6 +486,8 @@ const Index = () => {
           onSave={handleSave}
           onShowTutorial={() => setShowTutorial(true)}
           onShowSessionManager={() => setShowSessionManager(true)}
+          networkHealth={networkHealth}
+          isAutoSaving={isAutoSaving}
         />
       </div>
     );
@@ -465,6 +501,13 @@ const Index = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#E8A135] rounded-full blur-[120px] animate-pulse delay-1000"></div>
         <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-[#9945FF] rounded-full blur-[100px] animate-pulse delay-2000"></div>
       </div>
+
+      {/* Auto-save indicator */}
+      {isAutoSaving && (
+        <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-[#00FFD1]/20 to-[#00FFD1]/10 border border-[#00FFD1]/40 rounded-lg px-3 py-2 text-[#00FFD1] text-sm font-medium">
+          💾 Auto-saving...
+        </div>
+      )}
 
       {/* Keyboard Shortcuts Handler */}
       <KeyboardShortcuts
@@ -497,6 +540,8 @@ const Index = () => {
         onSave={handleSave}
         onShowTutorial={() => setShowTutorial(true)}
         onShowSessionManager={() => setShowSessionManager(true)}
+        networkHealth={networkHealth}
+        isAutoSaving={isAutoSaving}
       />
 
       {selectedNode && (
