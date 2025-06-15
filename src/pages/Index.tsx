@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { Canvas } from "@/components/Canvas";
 import { Toolbar } from "@/components/Toolbar";
@@ -7,6 +8,7 @@ import { Tutorial } from "@/components/Tutorial";
 import { SessionManager } from "@/components/SessionManager";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { InsightNotification } from "@/components/InsightNotification";
+import { Button } from "@/components/ui/button";
 import { Node, Connection } from "@/types/canvas";
 import { toast } from "sonner";
 
