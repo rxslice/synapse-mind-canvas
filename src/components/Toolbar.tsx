@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Brain, Plus, Zap, Network, Save, MoreHorizontal, Activity, Clock, Target, Move, Minimize2, X, Settings, HelpCircle, Wifi, WifiOff, Heart } from "lucide-react";
@@ -109,7 +108,7 @@ export const Toolbar = ({
     <div 
       className="absolute z-50"
       style={{
-        width: '198px', // 10% smaller than original 220px
+        width: '218px', // 10% wider than original 198px
         top: `${16 + position.y}px`,
         left: `${16 + position.x}px`,
       }}
@@ -127,8 +126,8 @@ export const Toolbar = ({
           <div className="absolute inset-[2px] rounded-2xl bg-gradient-to-br from-[#0B3D3D]/98 via-[#0A3A3A]/96 to-[#0B3D3D]/94" />
         </div>
 
-        <CardContent className="p-3.5 relative z-10"> {/* Slightly smaller padding */}
-          <div className="flex flex-col gap-3.5"> {/* Slightly smaller gap */}
+        <CardContent className="p-3.5 relative z-10">
+          <div className="flex flex-col gap-3.5">
             {/* Enhanced Header with drag functionality and menu */}
             <div 
               className="flex items-center justify-between cursor-move select-none"
@@ -199,12 +198,12 @@ export const Toolbar = ({
 
             {!isMinimized && (
               <>
-                {/* Enhanced Stats Grid - smaller */}
+                {/* Enhanced Stats Grid with better spacing */}
                 <div className="grid grid-cols-3 gap-1.5">
-                  <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-1.5 border border-[#00FFD1]/30 relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-2 border border-[#00FFD1]/30 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#00FFD1]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-363" />
                     <div className="relative z-10">
-                      <div className="flex items-center gap-1 mb-0.5">
+                      <div className="flex items-center gap-1 mb-1">
                         <Target className="w-2.5 h-2.5 text-[#00FFD1]" />
                         <span className="text-xs text-[#F0F0F0]/70 font-medium">Thoughts</span>
                       </div>
@@ -213,10 +212,10 @@ export const Toolbar = ({
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-1.5 border border-[#E8A135]/30 relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-2 border border-[#E8A135]/30 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#E8A135]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-363" />
                     <div className="relative z-10">
-                      <div className="flex items-center gap-1 mb-0.5">
+                      <div className="flex items-center gap-1 mb-1">
                         <Network className="w-2.5 h-2.5 text-[#E8A135]" />
                         <span className="text-xs text-[#F0F0F0]/70 font-medium">Synapses</span>
                       </div>
@@ -225,10 +224,10 @@ export const Toolbar = ({
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-1.5 border border-[#9945FF]/30 relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-2 border border-[#9945FF]/30 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#9945FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-363" />
                     <div className="relative z-10">
-                      <div className="flex items-center gap-1 mb-0.5">
+                      <div className="flex items-center gap-1 mb-1">
                         <Activity className="w-2.5 h-2.5 text-[#9945FF]" />
                         <span className="text-xs text-[#F0F0F0]/70 font-medium">Density</span>
                       </div>
