@@ -16,17 +16,21 @@ interface NodeInspectorProps {
 
 export const NodeInspector = ({ node, onUpdate, onDelete, onClose }: NodeInspectorProps) => {
   const [content, setContent] = useState(node.content);
-  const [type, setType] = useState(node.type);
+  const [type, setType] = useState<Node["type"]>(node.type);
   const [color, setColor] = useState(node.color);
 
   const handleSave = () => {
     onUpdate({
       ...node,
       content,
-      type: type as Node["type"],
+      type,
       color,
     });
     onClose();
+  };
+
+  const handleTypeChange = (value: string) => {
+    setType(value as Node["type"]);
   };
 
   const colorOptions = [
@@ -66,7 +70,7 @@ export const NodeInspector = ({ node, onUpdate, onDelete, onClose }: NodeInspect
 
             <div>
               <Label htmlFor="type" className="text-[#F0F0F0]/80">Type</Label>
-              <Select value={type} onValueChange={setType}>
+              <Select value={type} onValueChange={handleTypeChange}>
                 <SelectTrigger className="mt-1 bg-[#0B3D3D]/50 border-[#00FFD1]/30 text-[#F0F0F0]">
                   <SelectValue />
                 </SelectTrigger>
