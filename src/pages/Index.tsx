@@ -1,9 +1,11 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { Canvas } from "@/components/Canvas";
 import { Toolbar } from "@/components/Toolbar";
 import { NodeInspector } from "@/components/NodeInspector";
 import { AIInsights } from "@/components/AIInsights";
+import { Tutorial } from "@/components/Tutorial";
+import { SessionManager } from "@/components/SessionManager";
+import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { Node, Connection } from "@/types/canvas";
 import { toast } from "sonner";
 
@@ -15,6 +17,9 @@ const Index = () => {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [lastActivity, setLastActivity] = useState<Date>(new Date());
   const [isLoading, setIsLoading] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [showSessionManager, setShowSessionManager] = useState(false);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
 
   // Load saved data on mount with better error handling
   useEffect(() => {
@@ -25,6 +30,7 @@ const Index = () => {
         const savedNodes = localStorage.getItem('synapse-nodes');
         const savedConnections = localStorage.getItem('synapse-connections');
         const savedAIState = localStorage.getItem('synapse-ai-active');
+        const hasSeenTutorial = localStorage.getItem('synapse-tutorial-completed');
         
         if (savedNodes) {
           const parsedNodes = JSON.parse(savedNodes).map((node: any) => ({
@@ -48,14 +54,18 @@ const Index = () => {
           setIsAIActive(JSON.parse(savedAIState));
         }
 
-        // Welcome message after loading
+        if (!hasSeenTutorial && !savedNodes) {
+          setIsFirstVisit(true);
+          setShowTutorial(true);
+        }
+
         setTimeout(() => {
           if (savedNodes && JSON.parse(savedNodes).length > 0) {
             toast.success("Neural network restored", {
               description: `Loaded ${JSON.parse(savedNodes).length} thoughts and ${savedConnections ? JSON.parse(savedConnections).length : 0} connections`,
               duration: 3000,
             });
-          } else {
+          } else if (!hasSeenTutorial) {
             toast("Welcome to Synapse", {
               description: "Your AI-powered second brain is ready to capture your thoughts",
               duration: 4000,
@@ -284,6 +294,46 @@ const Index = () => {
     });
   }, []);
 
+  const handleTutorialComplete = useCallback(() => {
+    setShowTutorial(false);
+    localStorage.setItem('synapse-tutorial-completed', 'true');
+    
+    if (isFirstVisit) {
+      toast.success("Welcome to your neural network!", {
+        description: "You're ready to start capturing and connecting your thoughts",
+        duration: 4000
+      });
+    }
+  }, [isFirstVisit]);
+
+  const handleTutorialSkip = useCallback(() => {
+    setShowTutorial(false);
+    localStorage.setItem('synapse-tutorial-completed', 'true');
+  }, []);
+
+  const handleNewSession = useCallback(() => {
+    setNodes([]);
+    setConnections([]);
+    setSelectedNode(null);
+    setIsAIActive(false);
+    
+    localStorage.removeItem('synapse-nodes');
+    localStorage.removeItem('synapse-connections');
+    localStorage.removeItem('synapse-ai-active');
+  }, []);
+
+  const handleLoadSession = useCallback((loadedNodes: Node[], loadedConnections: Connection[]) => {
+    setNodes(loadedNodes);
+    setConnections(loadedConnections);
+    setSelectedNode(null);
+  }, []);
+
+  const handleDeleteSelected = useCallback(() => {
+    if (selectedNode) {
+      handleDeleteNode(selectedNode.id);
+    }
+  }, [selectedNode, handleDeleteNode]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0B3D3D] flex items-center justify-center">
@@ -306,6 +356,17 @@ const Index = () => {
         <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-[#9945FF] rounded-full blur-[100px] animate-pulse delay-2000"></div>
       </div>
 
+      {/* Keyboard Shortcuts Handler */}
+      <KeyboardShortcuts
+        onQuickCreate={handleQuickCreate}
+        onSave={handleSave}
+        onToggleAI={handleToggleAI}
+        onShowTutorial={() => setShowTutorial(true)}
+        onShowSessionManager={() => setShowSessionManager(true)}
+        selectedNode={selectedNode}
+        onDeleteSelected={handleDeleteSelected}
+      />
+
       <Canvas
         nodes={nodes}
         connections={connections}
@@ -324,6 +385,8 @@ const Index = () => {
         connectionCount={connections.length}
         onQuickCreate={handleQuickCreate}
         onSave={handleSave}
+        onShowTutorial={() => setShowTutorial(true)}
+        onShowSessionManager={() => setShowSessionManager(true)}
       />
 
       {selectedNode && (
@@ -343,6 +406,21 @@ const Index = () => {
           onClose={() => setIsAIActive(false)}
         />
       )}
+
+      <Tutorial
+        isVisible={showTutorial}
+        onComplete={handleTutorialComplete}
+        onSkip={handleTutorialSkip}
+      />
+
+      <SessionManager
+        nodes={nodes}
+        connections={connections}
+        onNewSession={handleNewSession}
+        onLoadSession={handleLoadSession}
+        isOpen={showSessionManager}
+        onClose={() => setShowSessionManager(false)}
+      />
     </div>
   );
 };
