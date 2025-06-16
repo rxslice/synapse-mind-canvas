@@ -296,13 +296,13 @@ export const Tutorial = ({
   const currentStepData = tutorialSteps[currentStep];
   return <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm">
       {/* Tutorial Card */}
-      <div className={`absolute transition-all duration-300 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`} style={{
+      <div style={{
       left: `${currentStepData.position.x}%`,
       top: `${currentStepData.position.y}%`,
       transform: 'translate(-50%, -50%)',
       maxWidth: '90vw',
       maxHeight: '90vh'
-    }}>
+    }} className="top-2.5 py-[12px] px-[12px] my-[12px] -top-2.5 ">
         <Card className="w-96 max-w-[90vw] bg-gradient-to-br from-[#0B3D3D]/95 to-[#083838]/90 backdrop-blur-xl border border-[#00FFD1]/50 shadow-[0_0_40px_rgba(0,255,209,0.3)]">
           <CardContent className="bottom-40 bottom-3/4 ">
             <div className="flex items-start justify-between mb-4">
