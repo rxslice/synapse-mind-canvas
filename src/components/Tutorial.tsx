@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -160,7 +159,7 @@ const tutorialSteps: TutorialStep[] = [
     title: "Neural Hub - Your Command Center",
     content: "This is your neural network's control center. Monitor your thoughts, connections, and activate AI insights. The hub shows real-time analytics and provides quick actions.",
     icon: <Brain className="w-5 h-5" />,
-    position: { x: 20, y: 15 },
+    position: { x: 50, y: 25 }, // Centered horizontally, top area
     illustration: (
       <div className="bg-gradient-to-br from-[#0B3D3D]/50 to-[#083838]/30 rounded-lg p-4 border border-[#00FFD1]/30 mb-4">
         <div className="flex items-center gap-3 mb-3">
@@ -183,7 +182,7 @@ const tutorialSteps: TutorialStep[] = [
     title: "Create Your First Thought",
     content: "Double-click anywhere on the canvas to create a new thought node. Each thought becomes a visual node in your neural network that you can edit, move, and connect.",
     icon: <Plus className="w-5 h-5" />,
-    position: { x: 50, y: 50 },
+    position: { x: 25, y: 50 }, // Left side, centered vertically
     illustration: (
       <div className="text-center mb-4">
         <div className="relative inline-block">
@@ -204,7 +203,7 @@ const tutorialSteps: TutorialStep[] = [
     title: "Connect Related Ideas",
     content: "Click the link button on any node to enter connection mode, then click another node to create a neural pathway. These connections help you visualize relationships between thoughts.",
     icon: <Link className="w-5 h-5" />,
-    position: { x: 70, y: 40 },
+    position: { x: 75, y: 50 }, // Right side, centered vertically
     illustration: (
       <div className="flex items-center justify-center gap-4 mb-4">
         <div className="w-20 h-16 bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/10 rounded-lg border border-[#00FFD1]/40 p-2 text-center">
@@ -225,7 +224,7 @@ const tutorialSteps: TutorialStep[] = [
     title: "Navigate Your Neural Network",
     content: "Use mouse wheel to zoom in/out and drag the canvas to pan around. As your network grows, smooth navigation helps you explore different areas of your knowledge graph.",
     icon: <MousePointer className="w-5 h-5" />,
-    position: { x: 30, y: 70 },
+    position: { x: 50, y: 65 }, // Center, lower area
     illustration: (
       <div className="bg-gradient-to-br from-[#0B3D3D]/50 to-[#083838]/30 rounded-lg p-4 border border-[#9945FF]/30 mb-4">
         <div className="grid grid-cols-3 gap-2 mb-3">
@@ -246,7 +245,7 @@ const tutorialSteps: TutorialStep[] = [
     title: "Activate AI Brain",
     content: "Turn on your AI brain to get intelligent insights, pattern recognition, and suggestions. The AI analyzes your neural network to discover hidden connections and provide valuable insights.",
     icon: <Zap className="w-5 h-5" />,
-    position: { x: 20, y: 70 },
+    position: { x: 50, y: 35 }, // Center, upper-middle area
     illustration: (
       <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/10 rounded-lg p-4 border border-[#9945FF]/40 mb-4">
         <div className="flex items-center gap-2 mb-3">
@@ -310,10 +309,12 @@ export const Tutorial = ({ isVisible, onComplete, onSkip }: TutorialProps) => {
         style={{
           left: `${currentStepData.position.x}%`,
           top: `${currentStepData.position.y}%`,
-          transform: 'translate(-50%, -50%)'
+          transform: 'translate(-50%, -50%)',
+          maxWidth: '90vw',
+          maxHeight: '90vh'
         }}
       >
-        <Card className="w-96 bg-gradient-to-br from-[#0B3D3D]/95 to-[#083838]/90 backdrop-blur-xl border border-[#00FFD1]/50 shadow-[0_0_40px_rgba(0,255,209,0.3)]">
+        <Card className="w-96 max-w-[90vw] bg-gradient-to-br from-[#0B3D3D]/95 to-[#083838]/90 backdrop-blur-xl border border-[#00FFD1]/50 shadow-[0_0_40px_rgba(0,255,209,0.3)]">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
