@@ -291,7 +291,7 @@ export const Tutorial = ({
 
   // Show intro page
   if (currentStep === -1) {
-    return <IntroPage onStart={handleStartTour} onSkip={onSkip} className="to-foreground " />;
+    return <IntroPage onStart={handleStartTour} onSkip={onSkip} />;
   }
   const currentStepData = tutorialSteps[currentStep];
   return <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm">
