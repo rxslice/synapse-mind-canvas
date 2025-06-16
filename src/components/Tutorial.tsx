@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, ArrowRight, ArrowLeft, Lightbulb, MousePointer, Zap, Brain, Network, BookOpen, Rocket, Users, Target, Link, Plus } from "lucide-react";
 
 interface TutorialStep {
@@ -23,125 +24,129 @@ interface TutorialProps {
 const IntroPage = ({ onStart, onSkip }: { onStart: () => void; onSkip: () => void }) => (
   <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm">
     <div className="absolute inset-0 flex items-center justify-center p-6">
-      <Card className="w-full max-w-4xl bg-gradient-to-br from-[#0B3D3D]/95 to-[#083838]/90 backdrop-blur-xl border border-[#00FFD1]/50 shadow-[0_0_60px_rgba(0,255,209,0.3)]">
-        <CardContent className="p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Brain className="w-12 h-12 text-[#00FFD1]" />
-              <h1 className="text-4xl font-extralight bg-gradient-to-r from-[#00FFD1] to-[#E8A135] bg-clip-text text-transparent">
-                Welcome to Synapse
-              </h1>
+      <Card className="w-full max-w-4xl h-[90vh] bg-gradient-to-br from-[#0B3D3D]/95 to-[#083838]/90 backdrop-blur-xl border border-[#00FFD1]/50 shadow-[0_0_60px_rgba(0,255,209,0.3)]">
+        <CardContent className="p-0 h-full flex flex-col">
+          <ScrollArea className="flex-1 px-8 py-8">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Brain className="w-12 h-12 text-[#00FFD1]" />
+                <h1 className="text-4xl font-extralight bg-gradient-to-r from-[#00FFD1] to-[#E8A135] bg-clip-text text-transparent">
+                  Welcome to Synapse
+                </h1>
+              </div>
+              <p className="text-lg text-[#F0F0F0]/80 mb-2">Your AI-Powered Second Brain</p>
+              <p className="text-[#F0F0F0]/60">Capture thoughts, connect ideas, and discover insights through neural networks</p>
             </div>
-            <p className="text-lg text-[#F0F0F0]/80 mb-2">Your AI-Powered Second Brain</p>
-            <p className="text-[#F0F0F0]/60">Capture thoughts, connect ideas, and discover insights through neural networks</p>
-          </div>
 
-          {/* What is Synapse */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-[#00FFD1] mb-4 flex items-center gap-2">
-              <Lightbulb className="w-5 h-5" />
-              What is Synapse?
-            </h2>
-            <p className="text-[#F0F0F0]/80 leading-relaxed mb-4">
-              Synapse is a visual knowledge management tool that mimics how your brain creates associations between ideas. 
-              Unlike traditional note-taking, Synapse lets you build interconnected networks of thoughts that grow more valuable over time.
-            </p>
-          </div>
-
-          {/* Use Cases Grid */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-[#E8A135] mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5" />
-              Perfect For
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-4 border border-[#00FFD1]/30">
-                <BookOpen className="w-6 h-6 text-[#00FFD1] mb-2" />
-                <h3 className="text-[#00FFD1] font-medium mb-1">Research & Study</h3>
-                <p className="text-[#F0F0F0]/70 text-sm">Map complex topics, identify connections, and build comprehensive knowledge networks</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-4 border border-[#E8A135]/30">
-                <Rocket className="w-6 h-6 text-[#E8A135] mb-2" />
-                <h3 className="text-[#E8A135] font-medium mb-1">Project Planning</h3>
-                <p className="text-[#F0F0F0]/70 text-sm">Brainstorm ideas, visualize dependencies, and organize complex projects</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-4 border border-[#9945FF]/30">
-                <Users className="w-6 h-6 text-[#9945FF] mb-2" />
-                <h3 className="text-[#9945FF] font-medium mb-1">Creative Writing</h3>
-                <p className="text-[#F0F0F0]/70 text-sm">Develop characters, plot lines, and story arcs with visual connections</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-[#FF6B6B]/20 to-[#FF6B6B]/5 rounded-lg p-4 border border-[#FF6B6B]/30">
-                <Brain className="w-6 h-6 text-[#FF6B6B] mb-2" />
-                <h3 className="text-[#FF6B6B] font-medium mb-1">Problem Solving</h3>
-                <p className="text-[#F0F0F0]/70 text-sm">Break down complex problems and visualize solution pathways</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-[#4ECDC4]/20 to-[#4ECDC4]/5 rounded-lg p-4 border border-[#4ECDC4]/30">
-                <Network className="w-6 h-6 text-[#4ECDC4] mb-2" />
-                <h3 className="text-[#4ECDC4] font-medium mb-1">Knowledge Management</h3>
-                <p className="text-[#F0F0F0]/70 text-sm">Build your personal knowledge graph that grows smarter over time</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-[#FFB84D]/20 to-[#FFB84D]/5 rounded-lg p-4 border border-[#FFB84D]/30">
-                <Zap className="w-6 h-6 text-[#FFB84D] mb-2" />
-                <h3 className="text-[#FFB84D] font-medium mb-1">Learning & Education</h3>
-                <p className="text-[#F0F0F0]/70 text-sm">Connect concepts, track progress, and enhance retention through visualization</p>
-              </div>
+            {/* What is Synapse */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-[#00FFD1] mb-4 flex items-center gap-2">
+                <Lightbulb className="w-5 h-5" />
+                What is Synapse?
+              </h2>
+              <p className="text-[#F0F0F0]/80 leading-relaxed mb-4">
+                Synapse is a visual knowledge management tool that mimics how your brain creates associations between ideas. 
+                Unlike traditional note-taking, Synapse lets you build interconnected networks of thoughts that grow more valuable over time.
+              </p>
             </div>
-          </div>
 
-          {/* Key Benefits */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-[#9945FF] mb-4">Why Synapse?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-[#00FFD1] rounded-full mt-2 flex-shrink-0"></div>
-                <div>
-                  <p className="text-[#F0F0F0]/80 text-sm"><strong>Visual Thinking:</strong> Ideas become tangible objects you can manipulate and connect</p>
+            {/* Use Cases Grid */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-[#E8A135] mb-4 flex items-center gap-2">
+                <Target className="w-5 h-5" />
+                Perfect For
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-4 border border-[#00FFD1]/30">
+                  <BookOpen className="w-6 h-6 text-[#00FFD1] mb-2" />
+                  <h3 className="text-[#00FFD1] font-medium mb-1">Research & Study</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Map complex topics, identify connections, and build comprehensive knowledge networks</p>
                 </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-[#E8A135] rounded-full mt-2 flex-shrink-0"></div>
-                <div>
-                  <p className="text-[#F0F0F0]/80 text-sm"><strong>AI Insights:</strong> Get intelligent suggestions and pattern recognition</p>
+                
+                <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-4 border border-[#E8A135]/30">
+                  <Rocket className="w-6 h-6 text-[#E8A135] mb-2" />
+                  <h3 className="text-[#E8A135] font-medium mb-1">Project Planning</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Brainstorm ideas, visualize dependencies, and organize complex projects</p>
                 </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-[#9945FF] rounded-full mt-2 flex-shrink-0"></div>
-                <div>
-                  <p className="text-[#F0F0F0]/80 text-sm"><strong>Flexible Organization:</strong> No rigid hierarchies - connect thoughts naturally</p>
+                
+                <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-4 border border-[#9945FF]/30">
+                  <Users className="w-6 h-6 text-[#9945FF] mb-2" />
+                  <h3 className="text-[#9945FF] font-medium mb-1">Creative Writing</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Develop characters, plot lines, and story arcs with visual connections</p>
                 </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 bg-[#4ECDC4] rounded-full mt-2 flex-shrink-0"></div>
-                <div>
-                  <p className="text-[#F0F0F0]/80 text-sm"><strong>Growing Value:</strong> Your network becomes more valuable as it expands</p>
+                
+                <div className="bg-gradient-to-br from-[#FF6B6B]/20 to-[#FF6B6B]/5 rounded-lg p-4 border border-[#FF6B6B]/30">
+                  <Brain className="w-6 h-6 text-[#FF6B6B] mb-2" />
+                  <h3 className="text-[#FF6B6B] font-medium mb-1">Problem Solving</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Break down complex problems and visualize solution pathways</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-[#4ECDC4]/20 to-[#4ECDC4]/5 rounded-lg p-4 border border-[#4ECDC4]/30">
+                  <Network className="w-6 h-6 text-[#4ECDC4] mb-2" />
+                  <h3 className="text-[#4ECDC4] font-medium mb-1">Knowledge Management</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Build your personal knowledge graph that grows smarter over time</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-[#FFB84D]/20 to-[#FFB84D]/5 rounded-lg p-4 border border-[#FFB84D]/30">
+                  <Zap className="w-6 h-6 text-[#FFB84D] mb-2" />
+                  <h3 className="text-[#FFB84D] font-medium mb-1">Learning & Education</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Connect concepts, track progress, and enhance retention through visualization</p>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-between items-center">
-            <Button
-              variant="ghost"
-              onClick={onSkip}
-              className="text-[#F0F0F0]/60 hover:text-[#F0F0F0]"
-            >
-              Skip Tutorial
-            </Button>
-            
-            <Button
-              onClick={onStart}
-              className="bg-gradient-to-r from-[#00FFD1] to-[#00FFD1]/90 text-[#0B3D3D] hover:shadow-[0_0_20px_rgba(0,255,209,0.4)] px-8"
-            >
-              Start Interactive Tour
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            {/* Key Benefits */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-[#9945FF] mb-4">Why Synapse?</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#00FFD1] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>Visual Thinking:</strong> Ideas become tangible objects you can manipulate and connect</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#E8A135] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>AI Insights:</strong> Get intelligent suggestions and pattern recognition</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#9945FF] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>Flexible Organization:</strong> No rigid hierarchies - connect thoughts naturally</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#4ECDC4] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>Growing Value:</strong> Your network becomes more valuable as it expands</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+
+          {/* Action Buttons - Fixed at bottom */}
+          <div className="border-t border-[#00FFD1]/20 p-6">
+            <div className="flex justify-between items-center">
+              <Button
+                variant="ghost"
+                onClick={onSkip}
+                className="text-[#F0F0F0]/60 hover:text-[#F0F0F0]"
+              >
+                Skip Tutorial
+              </Button>
+              
+              <Button
+                onClick={onStart}
+                className="bg-gradient-to-r from-[#00FFD1] to-[#00FFD1]/90 text-[#0B3D3D] hover:shadow-[0_0_20px_rgba(0,255,209,0.4)] px-8"
+              >
+                Start Interactive Tour
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
