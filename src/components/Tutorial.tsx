@@ -29,8 +29,105 @@ const IntroPage = ({ onStart, onSkip }: { onStart: () => void; onSkip: () => voi
       <Card className="w-full max-w-4xl h-[90vh] bg-gradient-to-br from-[#0B3D3D]/95 to-[#083838]/90 backdrop-blur-xl border border-[#00FFD1]/50 shadow-[0_0_60px_rgba(0,255,209,0.3)]">
         <CardContent className="p-0 h-full flex flex-col">
           <ScrollArea className="flex-1 px-8 py-8">
-            {/* ... unchanged intro page content */}
-            {/* skipped for brevity, unchanged */}
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Brain className="w-12 h-12 text-[#00FFD1]" />
+                <h1 className="text-4xl font-extralight bg-gradient-to-r from-[#00FFD1] to-[#E8A135] bg-clip-text text-transparent">
+                  Welcome to Synapse
+                </h1>
+              </div>
+              <p className="text-lg text-[#F0F0F0]/80 mb-2">Your AI-Powered Second Brain</p>
+              <p className="text-[#F0F0F0]/60">Capture thoughts, connect ideas, and discover insights through neural networks</p>
+            </div>
+
+            {/* What is Synapse */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-[#00FFD1] mb-4 flex items-center gap-2">
+                <Lightbulb className="w-5 h-5" />
+                What is Synapse?
+              </h2>
+              <p className="text-[#F0F0F0]/80 leading-relaxed mb-4">
+                Synapse is a visual knowledge management tool that mimics how your brain creates associations between ideas. 
+                Unlike traditional note-taking, Synapse lets you build interconnected networks of thoughts that grow more valuable over time.
+              </p>
+            </div>
+
+            {/* Use Cases Grid */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-[#E8A135] mb-4 flex items-center gap-2">
+                <Target className="w-5 h-5" />
+                Perfect For
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-4 border border-[#00FFD1]/30">
+                  <BookOpen className="w-6 h-6 text-[#00FFD1] mb-2" />
+                  <h3 className="text-[#00FFD1] font-medium mb-1">Research & Study</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Map complex topics, identify connections, and build comprehensive knowledge networks</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-4 border border-[#E8A135]/30">
+                  <Rocket className="w-6 h-6 text-[#E8A135] mb-2" />
+                  <h3 className="text-[#E8A135] font-medium mb-1">Project Planning</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Brainstorm ideas, visualize dependencies, and organize complex projects</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-4 border border-[#9945FF]/30">
+                  <Users className="w-6 h-6 text-[#9945FF] mb-2" />
+                  <h3 className="text-[#9945FF] font-medium mb-1">Creative Writing</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Develop characters, plot lines, and story arcs with visual connections</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-[#FF6B6B]/20 to-[#FF6B6B]/5 rounded-lg p-4 border border-[#FF6B6B]/30">
+                  <Brain className="w-6 h-6 text-[#FF6B6B] mb-2" />
+                  <h3 className="text-[#FF6B6B] font-medium mb-1">Problem Solving</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Break down complex problems and visualize solution pathways</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-[#4ECDC4]/20 to-[#4ECDC4]/5 rounded-lg p-4 border border-[#4ECDC4]/30">
+                  <Network className="w-6 h-6 text-[#4ECDC4] mb-2" />
+                  <h3 className="text-[#4ECDC4] font-medium mb-1">Knowledge Management</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Build your personal knowledge graph that grows smarter over time</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-[#FFB84D]/20 to-[#FFB84D]/5 rounded-lg p-4 border border-[#FFB84D]/30">
+                  <Zap className="w-6 h-6 text-[#FFB84D] mb-2" />
+                  <h3 className="text-[#FFB84D] font-medium mb-1">Learning & Education</h3>
+                  <p className="text-[#F0F0F0]/70 text-sm">Connect concepts, track progress, and enhance retention through visualization</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Benefits */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-[#9945FF] mb-4">Why Synapse?</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#00FFD1] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>Visual Thinking:</strong> Ideas become tangible objects you can manipulate and connect</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#E8A135] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>AI Insights:</strong> Get intelligent suggestions and pattern recognition</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#9945FF] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>Flexible Organization:</strong> No rigid hierarchies - connect thoughts naturally</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-[#4ECDC4] rounded-full mt-2 flex-shrink-0"></div>
+                  <div>
+                    <p className="text-[#F0F0F0]/80 text-sm"><strong>Growing Value:</strong> Your network becomes more valuable as it expands</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </ScrollArea>
 
           <div className="border-t border-[#00FFD1]/20 p-6">
@@ -54,60 +151,104 @@ const tutorialSteps: TutorialStep[] = [
   {
     id: 1,
     title: "Neural Hub - Your Command Center",
-    content: "This is your neural network's control center...",
+    content: "This is your neural network's control center. Monitor your thoughts, connections, and activate AI insights. The hub shows real-time analytics and provides quick actions.",
     icon: <Brain className="w-5 h-5" />,
-    position: { x: 50, y: 35 }, // modified from 25 to 35
+    position: { x: 50, y: 35 }, // updated position
     illustration: (
       <div className="bg-gradient-to-br from-[#0B3D3D]/50 to-[#083838]/30 rounded-lg p-4 border border-[#00FFD1]/30 mb-4">
-        {/* ... unchanged illustration */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 bg-[#00FFD1]/20 rounded-lg flex items-center justify-center">
+            <Brain className="w-4 h-4 text-[#00FFD1]" />
+          </div>
+          <div>
+            <div className="text-sm font-medium text-[#00FFD1]">Neural Hub</div>
+            <div className="text-xs text-[#F0F0F0]/60">5 thoughts • 3 connections</div>
+          </div>
+        </div>
+        <div className="text-xs text-[#F0F0F0]/70">
+          ✦ AI Brain: Ready • Network Health: 85%
+        </div>
       </div>
     )
   },
   {
     id: 2,
     title: "Create Your First Thought",
-    content: "Double-click anywhere on the canvas...",
+    content: "Double-click anywhere on the canvas to create a new thought node. Each thought becomes a visual node in your neural network that you can edit, move, and connect.",
     icon: <Plus className="w-5 h-5" />,
-    position: { x: 25, y: 50 }, // unchanged
+    position: { x: 25, y: 50 },
     illustration: (
       <div className="text-center mb-4">
-        {/* ... unchanged illustration */}
+        <div className="relative inline-block">
+          <div className="w-40 h-24 bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/10 rounded-lg border border-[#00FFD1]/40 p-3 text-center">
+            <div className="text-sm font-medium text-[#00FFD1] mb-1">💡 Brilliant Insight</div>
+            <div className="text-xs text-[#F0F0F0]/70">Double-click created this!</div>
+          </div>
+          <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#00FFD1] rounded-full flex items-center justify-center animate-pulse">
+            <Plus className="w-3 h-3 text-[#0B3D3D]" />
+          </div>
+        </div>
+        <div className="text-xs text-[#F0F0F0]/60 mt-2">Try double-clicking on the canvas!</div>
       </div>
     )
   },
   {
     id: 3,
     title: "Connect Related Ideas",
-    content: "Click the link button on any node...",
+    content: "Click the link button on any node to enter connection mode, then click another node to create a neural pathway. These connections help you visualize relationships between thoughts.",
     icon: <Link className="w-5 h-5" />,
-    position: { x: 75, y: 50 }, // unchanged
+    position: { x: 75, y: 50 },
     illustration: (
       <div className="flex items-center justify-center gap-4 mb-4">
-        {/* ... unchanged illustration */}
+        <div className="w-20 h-16 bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/10 rounded-lg border border-[#00FFD1]/40 p-2 text-center">
+          <div className="text-xs font-medium text-[#00FFD1]">Idea A</div>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="w-8 h-1 bg-gradient-to-r from-[#00FFD1] to-[#E8A135] rounded-full"></div>
+          <div className="text-xs text-[#F0F0F0]/60 mt-1">Connected!</div>
+        </div>
+        <div className="w-20 h-16 bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/10 rounded-lg border border-[#E8A135]/40 p-2 text-center">
+          <div className="text-xs font-medium text-[#E8A135]">Idea B</div>
+        </div>
       </div>
     )
   },
   {
     id: 4,
     title: "Navigate Your Neural Network",
-    content: "Use mouse wheel to zoom in/out...",
+    content: "Use mouse wheel to zoom in/out and drag the canvas to pan around. As your network grows, smooth navigation helps you explore different areas of your knowledge graph.",
     icon: <MousePointer className="w-5 h-5" />,
-    position: { x: 50, y: 55 }, // modified from 65 to 55
+    position: { x: 50, y: 55 }, // updated position
     illustration: (
       <div className="bg-gradient-to-br from-[#0B3D3D]/50 to-[#083838]/30 rounded-lg p-4 border border-[#9945FF]/30 mb-4">
-        {/* ... unchanged illustration */}
+        <div className="grid grid-cols-3 gap-2 mb-3">
+          {[...Array(9)].map((_, i) => (
+            <div key={i} className={`w-8 h-6 rounded border ${
+              i === 4 ? 'bg-[#00FFD1]/30 border-[#00FFD1]/60' : 'bg-[#F0F0F0]/10 border-[#F0F0F0]/20'
+            }`}></div>
+          ))}
+        </div>
+        <div className="text-xs text-[#F0F0F0]/70 text-center">
+          Scroll to zoom • Drag to pan • Click to select
+        </div>
       </div>
     )
   },
   {
     id: 5,
     title: "Activate AI Brain",
-    content: "Turn on your AI brain to get intelligent insights...",
+    content: "Turn on your AI brain to get intelligent insights, pattern recognition, and suggestions. The AI analyzes your neural network to discover hidden connections and provide valuable insights.",
     icon: <Zap className="w-5 h-5" />,
-    position: { x: 50, y: 35 }, // unchanged
+    position: { x: 50, y: 35 },
     illustration: (
       <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/10 rounded-lg p-4 border border-[#9945FF]/40 mb-4">
-        {/* ... unchanged illustration */}
+        <div className="flex items-center gap-2 mb-3">
+          <Zap className="w-5 h-5 text-[#9945FF]" />
+          <div className="text-sm font-medium text-[#9945FF]">AI Brain Active</div>
+        </div>
+        <div className="text-xs text-[#F0F0F0]/70 mb-2">🧠 Analyzing patterns...</div>
+        <div className="text-xs text-[#F0F0F0]/70 mb-2">💡 Found 3 potential connections</div>
+        <div className="text-xs text-[#E8A135]">⚡ Insight: Your research nodes cluster around sustainability themes</div>
       </div>
     )
   }
@@ -199,10 +340,10 @@ export const Tutorial = ({ isVisible, onComplete, onSkip }: TutorialProps) => {
             <div className="mb-6">
               <div className="flex justify-between text-xs text-[#F0F0F0]/50 mb-2">
                 <span>
-                  {currentStep > 0 ? `Back to Step ${currentStep}` : "Back"}
+                  {currentStep > 0 ? `Back to Step ${currentStep}` : "Back to Overview"}
                 </span>
                 <span>
-                  {currentStep < tutorialSteps.length - 1 ? `Step ${currentStep + 2}` : "Finish"}
+                  {currentStep < tutorialSteps.length - 1 ? `Next: Step ${currentStep + 2}` : "Finish Tour"}
                 </span>
               </div>
               <div className="flex h-2 bg-[#00FFD1]/20 rounded-full overflow-hidden">
