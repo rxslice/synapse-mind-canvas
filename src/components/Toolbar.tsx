@@ -109,7 +109,7 @@ export const Toolbar = ({
     <div 
       className="absolute z-50"
       style={{
-        width: '218px', // 10% wider than original 198px
+        width: '230px', // Increased width slightly more for better spacing
         top: `${16 + position.y}px`,
         left: `${16 + position.x}px`,
       }}
@@ -141,7 +141,7 @@ export const Toolbar = ({
                 </div>
                 <div>
                   <h1 className="text-sm font-light text-[#00FFD1] tracking-wide">Neural Hub</h1>
-                  <p className="text-xs text-[#F0F0F0]/60 font-light">Command Center</p>
+                  <p className="text-xs text-[#F0F0F0]/80 font-light">Command Center</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -154,7 +154,7 @@ export const Toolbar = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-5 w-5 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-363"
+                      className="h-5 w-5 p-0 text-[#F0F0F0]/70 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-363"
                     >
                       <MoreHorizontal className="w-2.5 h-2.5" />
                     </Button>
@@ -169,7 +169,7 @@ export const Toolbar = ({
                         variant="ghost"
                         size="sm"
                         onClick={onShowTutorial}
-                        className="w-full justify-start text-[#F0F0F0]/80 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10"
+                        className="w-full justify-start text-[#F0F0F0]/90 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10"
                       >
                         <HelpCircle className="w-3.5 h-3.5 mr-2" />
                         Tutorial
@@ -178,7 +178,7 @@ export const Toolbar = ({
                         variant="ghost"
                         size="sm"
                         onClick={onShowSessionManager}
-                        className="w-full justify-start text-[#F0F0F0]/80 hover:text-[#E8A135] hover:bg-[#E8A135]/10"
+                        className="w-full justify-start text-[#F0F0F0]/90 hover:text-[#E8A135] hover:bg-[#E8A135]/10"
                       >
                         <Settings className="w-3.5 h-3.5 mr-2" />
                         Session Manager
@@ -190,7 +190,7 @@ export const Toolbar = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsMinimized(!isMinimized)}
-                  className="h-5 w-5 p-0 text-[#F0F0F0]/50 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-363"
+                  className="h-5 w-5 p-0 text-[#F0F0F0]/70 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 rounded-lg transition-all duration-363"
                 >
                   <Minimize2 className="w-2.5 h-2.5" />
                 </Button>
@@ -199,41 +199,41 @@ export const Toolbar = ({
 
             {!isMinimized && (
               <>
-                {/* Enhanced Stats Grid with better spacing */}
-                <div className="grid grid-cols-3 gap-1.5">
-                  <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-2 border border-[#00FFD1]/30 relative overflow-hidden group">
+                {/* Enhanced Stats Grid with better spacing and layout */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-gradient-to-br from-[#00FFD1]/20 to-[#00FFD1]/5 rounded-lg p-2.5 border border-[#00FFD1]/30 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#00FFD1]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-363" />
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-1 mb-1">
+                    <div className="relative z-10 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
                         <Target className="w-2.5 h-2.5 text-[#00FFD1]" />
-                        <span className="text-xs text-[#F0F0F0]/70 font-medium">Thoughts</span>
+                        <span className="text-xs text-[#F0F0F0]/85 font-medium">Thoughts</span>
                       </div>
                       <div className="text-sm font-bold text-[#00FFD1] mb-0.5">{nodeCount}</div>
-                      <div className="text-xs text-[#00FFD1]/70">Active nodes</div>
+                      <div className="text-xs text-[#00FFD1]/80">Active nodes</div>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-2 border border-[#E8A135]/30 relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#E8A135]/20 to-[#E8A135]/5 rounded-lg p-2.5 border border-[#E8A135]/30 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#E8A135]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-363" />
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-1 mb-1">
+                    <div className="relative z-10 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
                         <Network className="w-2.5 h-2.5 text-[#E8A135]" />
-                        <span className="text-xs text-[#F0F0F0]/70 font-medium">Synapses</span>
+                        <span className="text-xs text-[#F0F0F0]/85 font-medium">Synapses</span>
                       </div>
                       <div className="text-sm font-bold text-[#E8A135] mb-0.5">{connectionCount}</div>
-                      <div className="text-xs text-[#E8A135]/70">Connections</div>
+                      <div className="text-xs text-[#E8A135]/80">Connections</div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-2 border border-[#9945FF]/30 relative overflow-hidden group">
+                  <div className="bg-gradient-to-br from-[#9945FF]/20 to-[#9945FF]/5 rounded-lg p-2.5 border border-[#9945FF]/30 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#9945FF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-363" />
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-1 mb-1">
+                    <div className="relative z-10 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-1">
                         <Activity className="w-2.5 h-2.5 text-[#9945FF]" />
-                        <span className="text-xs text-[#F0F0F0]/70 font-medium">Density</span>
+                        <span className="text-xs text-[#F0F0F0]/85 font-medium">Density</span>
                       </div>
                       <div className="text-sm font-bold text-[#9945FF] mb-0.5">{Math.round(connectionStrength)}%</div>
-                      <div className="text-xs text-[#9945FF]/70">Network strength</div>
+                      <div className="text-xs text-[#9945FF]/80">Network strength</div>
                     </div>
                   </div>
                 </div>
@@ -242,7 +242,7 @@ export const Toolbar = ({
                 <div className="flex items-center justify-between p-1.5 bg-[#083838]/40 rounded-lg border border-[#00FFD1]/20">
                   <div className="flex items-center gap-2">
                     <span className="text-sm">{getHealthIcon(networkHealth)}</span>
-                    <span className="text-sm text-[#F0F0F0]/80">Health: {networkHealth}%</span>
+                    <span className="text-sm text-[#F0F0F0]/90">Health: {networkHealth}%</span>
                   </div>
                   <div 
                     className="w-16 h-1.5 bg-[#083838] rounded-full overflow-hidden"
@@ -260,11 +260,11 @@ export const Toolbar = ({
                 {/* Session Info - smaller */}
                 <div className="flex items-center justify-between p-1.5 bg-[#083838]/40 rounded-lg border border-[#00FFD1]/20">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-2.5 h-2.5 text-[#00FFD1]/70" />
-                    <span className="text-sm text-[#F0F0F0]/80">Session: {formatTime(sessionTime)}</span>
+                    <Clock className="w-2.5 h-2.5 text-[#00FFD1]/80" />
+                    <span className="text-sm text-[#F0F0F0]/90">Session: {formatTime(sessionTime)}</span>
                   </div>
                   {lastSaved && (
-                    <span className="text-xs text-[#F0F0F0]/50">
+                    <span className="text-xs text-[#F0F0F0]/70">
                       Saved {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   )}
@@ -284,7 +284,7 @@ export const Toolbar = ({
                   <Button
                     onClick={handleSave}
                     size="sm"
-                    className="h-7 px-2 bg-gradient-to-r from-[#083838]/60 to-[#083838]/40 text-[#F0F0F0]/70 border border-[#00FFD1]/20 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 hover:border-[#00FFD1]/40 transition-all duration-363 rounded-lg"
+                    className="h-7 px-2 bg-gradient-to-r from-[#083838]/60 to-[#083838]/40 text-[#F0F0F0]/80 border border-[#00FFD1]/20 hover:text-[#00FFD1] hover:bg-[#00FFD1]/10 hover:border-[#00FFD1]/40 transition-all duration-363 rounded-lg"
                     disabled={isAutoSaving}
                   >
                     <Save className="w-2.5 h-2.5" />
@@ -311,11 +311,11 @@ export const Toolbar = ({
 
                 {/* Enhanced Network Status - smaller */}
                 <div className="flex items-center justify-center gap-2 pt-1.5 border-t border-[#00FFD1]/20">
-                  <Network className="w-2.5 h-2.5 text-[#00FFD1]/60" />
-                  <span className="text-sm text-[#F0F0F0]/60 font-medium">Neural Network</span>
+                  <Network className="w-2.5 h-2.5 text-[#00FFD1]/70" />
+                  <span className="text-sm text-[#F0F0F0]/80 font-medium">Neural Network</span>
                   <div className="flex items-center gap-1">
                     <div className="w-1 h-1 rounded-full bg-[#00FFD1] animate-pulse" />
-                    <span className="text-xs text-[#00FFD1]/80">Online</span>
+                    <span className="text-xs text-[#00FFD1]/90">Online</span>
                   </div>
                 </div>
               </>
@@ -327,17 +327,17 @@ export const Toolbar = ({
       {/* Enhanced Instructions - only show when not minimized - smaller */}
       {!isMinimized && (
         <div className="mt-1.5 bg-gradient-to-br from-[#0B3D3D]/90 to-[#083838]/80 backdrop-blur-sm border border-[#00FFD1]/20 rounded-lg p-1.5">
-          <div className="text-xs text-[#F0F0F0]/70 space-y-0.5">
+          <div className="text-xs text-[#F0F0F0]/80 space-y-0.5">
             <div className="flex justify-between items-center">
-              <span className="text-[#F0F0F0]/50">Double-click canvas</span>
+              <span className="text-[#F0F0F0]/70">Double-click canvas</span>
               <span className="text-[#00FFD1]/80 font-medium">Create thought</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[#F0F0F0]/50">Click + hold drag</span>
+              <span className="text-[#F0F0F0]/70">Click + hold drag</span>
               <span className="text-[#E8A135]/80 font-medium">Pan canvas</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-[#F0F0F0]/50">Wheel scroll</span>
+              <span className="text-[#F0F0F0]/70">Wheel scroll</span>
               <span className="text-[#9945FF]/80 font-medium">Zoom view</span>
             </div>
           </div>
