@@ -221,7 +221,7 @@ export const Toolbar = ({
                         <span className="text-xs text-[#F0F0F0] font-medium">Synapses</span>
                       </div>
                       <div className="text-sm font-bold text-[#E8A135] mb-0.5">{connectionCount}</div>
-                      <div className="text-xs text-[#E8A135]/90 text-center">Connections</div>
+                      <div className="text-xs text-[#E8A135]/90 text-center">Links</div>
                     </div>
                   </div>
 
