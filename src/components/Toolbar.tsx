@@ -206,10 +206,10 @@ export const Toolbar = ({
                     <div className="relative z-10 text-center">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <Target className="w-2.5 h-2.5 text-[#00FFD1]" />
-                        <span className="text-xs text-[#F0F0F0]/85 font-medium">Thoughts</span>
+                        <span className="text-xs text-[#F0F0F0] font-medium">Thoughts</span>
                       </div>
                       <div className="text-sm font-bold text-[#00FFD1] mb-0.5">{nodeCount}</div>
-                      <div className="text-xs text-[#00FFD1]/80">Active nodes</div>
+                      <div className="text-xs text-[#00FFD1]/90">Active nodes</div>
                     </div>
                   </div>
                   
@@ -218,10 +218,10 @@ export const Toolbar = ({
                     <div className="relative z-10 text-center">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <Network className="w-2.5 h-2.5 text-[#E8A135]" />
-                        <span className="text-xs text-[#F0F0F0]/85 font-medium">Synapses</span>
+                        <span className="text-xs text-[#F0F0F0] font-medium">Synapses</span>
                       </div>
                       <div className="text-sm font-bold text-[#E8A135] mb-0.5">{connectionCount}</div>
-                      <div className="text-xs text-[#E8A135]/80">Connections</div>
+                      <div className="text-xs text-[#E8A135]/90 text-center">Connections</div>
                     </div>
                   </div>
 
@@ -230,10 +230,10 @@ export const Toolbar = ({
                     <div className="relative z-10 text-center">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <Activity className="w-2.5 h-2.5 text-[#9945FF]" />
-                        <span className="text-xs text-[#F0F0F0]/85 font-medium">Density</span>
+                        <span className="text-xs text-[#F0F0F0] font-medium">Density</span>
                       </div>
                       <div className="text-sm font-bold text-[#9945FF] mb-0.5">{Math.round(connectionStrength)}%</div>
-                      <div className="text-xs text-[#9945FF]/80">Network strength</div>
+                      <div className="text-xs text-[#9945FF]/90">Network strength</div>
                     </div>
                   </div>
                 </div>
