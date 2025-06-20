@@ -1,4 +1,3 @@
-
 import { useRef, useEffect, useState, useCallback } from "react";
 import { Node, Connection, CanvasState } from "@/types/canvas";
 import { NodeComponent } from "./NodeComponent";
@@ -224,7 +223,7 @@ export const Canvas = ({
       onMouseLeave={handleMouseLeave}
       style={{
         background: `
-          radial-gradient(circle at 15% 45%, rgba(0, 255, 209, ${isHovering ? '0.15' : '0.10'}) 0%, transparent 50%),
+          radial-gradient(circle at 15% 45%, rgba(0, 40, 40, 0.8) 0%, transparent 50%),
           radial-gradient(circle at 85% 15%, rgba(232, 161, 53, ${isHovering ? '0.10' : '0.06'}) 0%, transparent 50%),
           radial-gradient(circle at 35% 85%, rgba(255, 0, 255, ${isHovering ? '0.08' : '0.05'}) 0%, transparent 50%),
           linear-gradient(135deg, #0B3D3D 0%, #083838 25%, #0A3A3A 50%, #083838 75%, #0B3D3D 100%)
@@ -232,14 +231,14 @@ export const Canvas = ({
         transition: 'background 0.3s ease',
       }}
     >
-      {/* Enhanced grid with better visibility */}
+      {/* Enhanced grid with darker blue colors */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           opacity: isHovering ? 0.2 : 0.12,
           backgroundImage: `
-            linear-gradient(rgba(0, 255, 209, 0.5) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 209, 0.5) 1px, transparent 1px)
+            linear-gradient(rgba(0, 40, 40, 0.8) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 40, 40, 0.8) 1px, transparent 1px)
           `,
           backgroundSize: `${50 * canvasState.zoom}px ${50 * canvasState.zoom}px`,
           transform: `translate(${canvasState.panX % (50 * canvasState.zoom)}px, ${canvasState.panY % (50 * canvasState.zoom)}px)`,
