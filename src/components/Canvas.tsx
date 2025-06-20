@@ -1,3 +1,4 @@
+
 import { useRef, useEffect, useState, useCallback } from "react";
 import { Node, Connection, CanvasState } from "@/types/canvas";
 import { NodeComponent } from "./NodeComponent";
@@ -223,7 +224,7 @@ export const Canvas = ({
       onMouseLeave={handleMouseLeave}
       style={{
         background: `
-          radial-gradient(circle at 15% 45%, rgba(0, 40, 40, 0.8) 0%, transparent 50%),
+          radial-gradient(circle at 15% 45%, rgba(0, 20, 20, 0.6) 0%, transparent 50%),
           radial-gradient(circle at 85% 15%, rgba(232, 161, 53, ${isHovering ? '0.10' : '0.06'}) 0%, transparent 50%),
           radial-gradient(circle at 35% 85%, rgba(255, 0, 255, ${isHovering ? '0.08' : '0.05'}) 0%, transparent 50%),
           linear-gradient(135deg, #0B3D3D 0%, #083838 25%, #0A3A3A 50%, #083838 75%, #0B3D3D 100%)
