@@ -18,7 +18,10 @@ workflows:
     scripts:
       - name: Set Android SDK location
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+          # Ensure we have a build dir (fallback to current dir if CM_BUILD_DIR isn't set)
+          BUILD_DIR="${CM_BUILD_DIR:-$PWD}"
+          mkdir -p "$BUILD_DIR/android"
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$BUILD_DIR/android/local.properties"
 
       - name: Install npm dependencies
         script: |
