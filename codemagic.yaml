@@ -12,8 +12,6 @@ workflows:
 
       android_signing:
 
-        - keystore_reference
-
       groups:
 
         - google_play
@@ -80,32 +78,6 @@ workflows:
 
     publishing:
 
-      email:
-
-        recipients:
-
-          - user_1@example.com
-
-          - user_2@example.com
-
-        notify:
-
-          success: true
-
-          failure: false
-
-      google_play:
-
-        credentials: $GOOGLE_PLAY_SERVICE_ACCOUNT_CREDENTIALS
-
-        track: internal
-
-        submit_as_draft: true
-
-
-
-
-
   react-native-ios:
 
     name: React Native iOS
@@ -116,25 +88,7 @@ workflows:
 
     integrations:
 
-      app_store_connect: codemagic
-
-    environment:
-
-      ios_signing:
-
-        distribution_type: app_store
-
-        bundle_identifier: io.codemagic.sample.reactnative
-
       vars:
-
-        BUNDLE_ID: "io.codemagic.sample.reactnative"
-
-        XCODE_WORKSPACE: "CodemagicSample.xcworkspace" # <-- Put the name of your Xcode workspace here
-
-        XCODE_SCHEME: "CodemagicSample" # <-- Put the name of your Xcode scheme here
-
-        APP_STORE_APPLE_ID: 1555555551
 
     scripts:
 
@@ -201,43 +155,5 @@ workflows:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
 
     publishing:
-
-      email:
-
-        recipients:
-
-          - user_1@example.com
-
-          - user_2@example.com
-
-        notify:
-
-          success: true
-
-          failure: false
-
-      app_store_connect:
-
-        auth: integration
-
-
-
-        # Configuration related to TestFlight (optional)
-
-        # Note: This action is performed during post-processing.
-
-        submit_to_testflight: true
-
-        beta_groups: # Specify the names of beta tester groups that will get access to the build once it has passed beta review.
-
-          - group name 1
-
-          - group name 2
-
-
-
-        # Configuration related to App Store (optional)
-
-        # Note: This action is performed during post-processing.
-
+    
         submit_to_app_store: false
