@@ -40,7 +40,7 @@ workflows:
 
       - name: Run Expo prebuild (android)
         script: |
-          npx expo prebuild --platform android --non-interactive
+          CI=1 npx expo prebuild --platform android
 
       - name: Set up android/app/build.gradle
         script: |
