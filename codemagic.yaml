@@ -27,6 +27,17 @@ workflows:
         script: |
           npm install
 
+      - name: Ensure expo is installed (required for expo prebuild to read SDK version)
+        script: |
+          # If expo isn't present in node_modules, install it into node_modules without modifying package.json.
+          # Prefer adding expo to package.json permanently (npm install expo --save) in your repo for reproducible builds.
+          if ! npm ls expo >/dev/null 2>&1; then
+            echo "expo not found in node_modules — installing expo into node_modules (no-save)..."
+            npm install expo --no-save --no-audit --no-fund
+          else
+            echo "expo already present"
+          fi
+
       - name: Run Expo prebuild (android)
         script: |
           npx expo prebuild --platform android
