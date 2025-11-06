@@ -1,1 +1,16 @@
-{"name":"react-native-sample","version":"1.0.0","private":true,"scripts":{"cm:set-android-sdk":"node scripts/set-android-sdk.js","cm:install":"npm install","cm:ensure-expo":"node scripts/ensure-expo.js","prebuild:android":"npx expo prebuild --platform android","cm:set-build-gradle":"node scripts/set-build-gradle.js","cm:build-android":"node scripts/build-android.js","build:android":"npm run cm:set-android-sdk && npm run cm:install && npm run cm:ensure-expo && npm run prebuild:android && npm run cm:set-build-gradle && npm run cm:build-android"},"dependencies":{},"devDependencies":{}}
+{
+  "name": "react-native-sample",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "cm:set-android-sdk": "node scripts/set-android-sdk.js",
+    "cm:install": "npm install",
+    "cm:ensure-expo": "node scripts/ensure-expo.js",
+    "prebuild:android": "npx expo prebuild --platform android --yes",
+    "cm:set-build-gradle": "node scripts/set-build-gradle.js",
+    "cm:build-android": "node scripts/build-android.js",
+    "build:android": "npm run cm:set-android-sdk && npm run cm:install && npm run cm:ensure-expo && npm run prebuild:android && npm run cm:set-build-gradle && npm run cm:build-android"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
